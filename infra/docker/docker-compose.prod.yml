@@ -1,0 +1,27 @@
+# Production overrides — disable DB synchronize, run migrations, use Groth16 ZKP
+services:
+  postgres:
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    env_file:
+      - .env.production
+    environment:
+      NODE_ENV: production
+      DB_SYNCHRONIZE: "false"
+      DB_MIGRATIONS_RUN: "true"
+      ZKP_ADAPTER: snarkjs
+      ZKP_ARTIFACTS_ENV: prod
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 768M
+
+  grafana:
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}

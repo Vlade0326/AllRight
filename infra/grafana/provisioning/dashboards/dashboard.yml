@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: AllRight
+    orgId: 1
+    folder: AllRight
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    options:
+      path: /etc/grafana/dashboards

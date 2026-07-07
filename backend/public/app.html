@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AllRight — Ubicación</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="s25-frame app-frame">
+        <div class="camera-notch"></div>
+        <div class="screen app-screen">
+            <header class="app-header">
+                <h1>AllRight</h1>
+                <button class="btn-icon" onclick="logout()" title="Cerrar sesión" data-testid="logout-btn">⎋</button>
+            </header>
+
+            <div id="map" class="map-container" data-testid="map"></div>
+
+            <div class="coords-panel" data-testid="coords-panel">
+                <span id="coords-text">Obteniendo ubicación…</span>
+                <span id="zone-status" class="zone-badge" data-testid="zone-status">—</span>
+            </div>
+
+            <div class="action-panel">
+                <button class="btn-primary" onclick="generateProof()" data-testid="prove-btn">
+                    Generar proof ZKP
+                </button>
+                <button class="btn-secondary" onclick="verifyProof()" data-testid="verify-btn">
+                    Verificar proof
+                </button>
+                <button class="btn-secondary" onclick="checkGeofence()" data-testid="geofence-btn">
+                    Check geofence
+                </button>
+            </div>
+
+            <p id="app-status" class="status app-status" data-testid="app-status"></p>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/snarkjs@0.7.5/build/snarkjs.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

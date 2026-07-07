@@ -1,0 +1,22 @@
+{
+  "name": "allright",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LBSN con privacidad ZKP — cloud-agnostic",
+  "workspaces": [
+    "backend",
+    "e2e"
+  ],
+  "scripts": {
+    "dev:infra": "docker compose -f infra/docker/docker-compose.dev.yml up -d",
+    "dev:api": "npm run start:dev -w backend",
+    "build": "npm run build -w backend",
+    "test": "npm run test -w backend",
+    "test:e2e": "npm run test -w e2e",
+    "docker:up": "docker compose up -d --build",
+    "docker:down": "docker compose down",
+    "docker:prod": "docker compose --env-file .env.production -f docker-compose.yml -f infra/docker/docker-compose.prod.yml up -d --build",
+    "setup:prod": "powershell -ExecutionPolicy Bypass -File scripts/generate-production-secrets.ps1",
+    "zkp:ceremony:verify": "docker run --rm -v ./backend/circuits:/circuits -w /circuits node:20-bookworm bash -c \"npm i -g snarkjs@0.7.5 && sed -i 's/\\r$//' ceremony/verify-ceremony.sh && chmod +x ceremony/verify-ceremony.sh && ./ceremony/verify-ceremony.sh\""
+  }
+}

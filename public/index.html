@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AllRight — Samsung S25</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="s25-frame">
+        <div class="camera-notch"></div>
+        <div class="screen">
+            <div class="login-box">
+                <h1>AllRight</h1>
+                <p>Inicia sesión para continuar</p>
+                <input type="email" id="email" placeholder="Correo electrónico" data-testid="email">
+                <input type="password" id="password" placeholder="Contraseña" data-testid="password">
+                <button onclick="login()" data-testid="login-btn">Ingresar</button>
+                <p id="status" class="status" data-testid="status"></p>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
