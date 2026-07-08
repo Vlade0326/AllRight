@@ -32,6 +32,10 @@ export class TypeOrmUserRepository implements IUserRepository {
     return row ? this.toRecord(row) : null;
   }
 
+  async updatePassword(id: string, passwordHash: string): Promise<void> {
+    await this.repo.update({ id }, { password: passwordHash });
+  }
+
   private toRecord(entity: UserOrmEntity): UserRecord {
     return {
       id: entity.id,

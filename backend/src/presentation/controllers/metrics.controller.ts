@@ -8,8 +8,10 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { MetricsService } from '../../infrastructure/observability/metrics.service';
+import { SkipRateLimit } from '../decorators/skip-rate-limit.decorator';
 
 @Controller()
+@SkipRateLimit()
 export class MetricsController {
   constructor(private readonly metrics: MetricsService) {}
 

@@ -18,6 +18,7 @@ import { TypeOrmUserRepository } from './persistence/typeorm/user.repository';
 import { TypeOrmAuditRepository } from './persistence/typeorm/audit.repository';
 import { UserOrmEntity } from './persistence/typeorm/user.orm-entity';
 import { AuditLogOrmEntity } from './persistence/typeorm/audit-log.orm-entity';
+import { RateLimitService } from './security/rate-limit.service';
 import { zkpAdapterProvider } from './zkp/zkp.provider';
 
 const defaultZone = new GeofenceZone(
@@ -58,6 +59,7 @@ const defaultZone = new GeofenceZone(
   providers: [
     MetricsService,
     RedisCacheAdapter,
+    RateLimitService,
     TypeOrmUserRepository,
     TypeOrmAuditRepository,
     zkpAdapterProvider,
@@ -68,6 +70,7 @@ const defaultZone = new GeofenceZone(
   ],
   exports: [
     MetricsService,
+    RateLimitService,
     USER_REPOSITORY,
     AUDIT_REPOSITORY,
     CACHE_PORT,

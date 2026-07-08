@@ -26,6 +26,8 @@
     "loadtest:100": "k6 run k8s/load-test-100.js",
     "loadtest:500": "k6 run k8s/load-test-500.js",
     "loadtest:zkp": "k6 run k8s/load-test-zkp.js",
-    "loadtest:500:incluster": "powershell -ExecutionPolicy Bypass -File scripts/k8s-loadtest-500.ps1"
+    "loadtest:500:incluster": "powershell -ExecutionPolicy Bypass -File scripts/k8s-loadtest-500.ps1",
+    "security:forensic": "powershell -ExecutionPolicy Bypass -File scripts/security/forensic-ram-audit.ps1",
+    "security:burp": "echo Ver scripts/security/BURP-SUITE.md"
   }
 }

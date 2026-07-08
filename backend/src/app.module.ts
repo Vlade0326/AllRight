@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { getZkpArtifactsDir } from './infrastructure/zkp/zkp-artifacts.util';
@@ -14,6 +14,7 @@ import { HealthController } from './presentation/controllers/health.controller';
 import { MetricsController } from './presentation/controllers/metrics.controller';
 import { GlobalExceptionFilter } from './presentation/filters/http-exception.filter';
 import { HttpMetricsInterceptor } from './presentation/interceptors/http-metrics.interceptor';
+import { RateLimitGuard } from './presentation/guards/rate-limit.guard';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { HttpMetricsInterceptor } from './presentation/interceptors/http-metrics
   providers: [
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: HttpMetricsInterceptor },
+    { provide: APP_GUARD, useClass: RateLimitGuard },
   ],
 })
 export class AppModule {}

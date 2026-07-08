@@ -62,6 +62,14 @@ spec:
               value: "prod"
             - name: JWT_EXPIRES_IN
               value: "60m"
+            - name: RATE_LIMIT_MAX
+              value: "120"
+            - name: RATE_LIMIT_WINDOW_SEC
+              value: "60"
+            - name: RATE_LIMIT_LOGIN_MAX
+              value: "10"
+            - name: RATE_LIMIT_LOGIN_WINDOW_SEC
+              value: "300"
             - name: GEOFENCE_LAT
               value: "3.4516"
             - name: GEOFENCE_LON

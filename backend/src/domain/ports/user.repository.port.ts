@@ -10,4 +10,5 @@ export interface IUserRepository {
   findAll(): Promise<UserRecord[]>;
   findByEmail(email: string): Promise<UserRecord | null>;
   findById(id: string): Promise<UserRecord | null>;
+  updatePassword(id: string, passwordHash: string): Promise<void>;
 }

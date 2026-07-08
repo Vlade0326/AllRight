@@ -1,0 +1,52 @@
+{
+  "project": "AllRight API",
+  "baseUrl": "http://127.0.0.1:3000",
+  "scope": {
+    "include": ["/auth/*", "/users", "/location/*", "/security/*", "/health", "/metrics"]
+  },
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "body": { "email": "usuario@allright.app", "password": "AllRight2026!Secure" },
+      "tests": ["sql_injection", "brute_force", "rate_limit_429"]
+    },
+    {
+      "method": "POST",
+      "path": "/auth/change-password",
+      "auth": "Bearer",
+      "body": { "currentPassword": "AllRight2026!Secure", "newPassword": "NewPass2026!Secure" },
+      "tests": ["auth_bypass", "idor"]
+    },
+    {
+      "method": "POST",
+      "path": "/users",
+      "body": { "email": "fuzz@test.com", "password": "Test1234!", "role": "user" },
+      "tests": ["mass_assignment", "xss_stored"]
+    },
+    {
+      "method": "POST",
+      "path": "/location/prove",
+      "auth": "Bearer",
+      "body": { "lat": 3.4516, "lon": -76.5320 },
+      "tests": ["geofence_bypass", "replay"]
+    },
+    {
+      "method": "POST",
+      "path": "/location/verify",
+      "auth": "Bearer",
+      "body": { "proof": {}, "payload": {} },
+      "tests": ["zkp_tampering", "invalid_proof"]
+    },
+    {
+      "method": "GET",
+      "path": "/metrics",
+      "tests": ["info_disclosure"]
+    }
+  ],
+  "intruderPayloads": {
+    "sql": ["' OR '1'='1", "admin'--", "1; DROP TABLE users--"],
+    "xss": ["<script>alert(1)</script>", "\"><img src=x onerror=alert(1)>"],
+    "jwt": ["none_algorithm", "expired_token", "tampered_signature"]
+  }
+}

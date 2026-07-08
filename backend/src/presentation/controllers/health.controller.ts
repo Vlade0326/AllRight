@@ -2,8 +2,10 @@ import { Controller, Get } from '@nestjs/common';
 import { Inject } from '@nestjs/common';
 import { CACHE_PORT } from '../../application/tokens';
 import { ICachePort } from '../../domain/ports/cache.port';
+import { SkipRateLimit } from '../decorators/skip-rate-limit.decorator';
 
 @Controller('health')
+@SkipRateLimit()
 export class HealthController {
   constructor(@Inject(CACHE_PORT) private readonly cache: ICachePort) {}
 
