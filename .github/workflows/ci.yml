@@ -104,22 +104,29 @@ jobs:
         run: |
           npm run build -w backend
           npm run start:prod -w backend &
-          sleep 10
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:3000/health && break
+            sleep 2
+          done
+          curl -sf http://127.0.0.1:3000/health || (echo "API failed to start" && exit 1)
         env:
           DB_HOST: localhost
           DB_PORT: 5432
           DB_USERNAME: postgres
           DB_PASSWORD: root
           DB_DATABASE: postgres
+          DB_SYNCHRONIZE: "true"
+          DB_MIGRATIONS_RUN: "false"
           REDIS_HOST: localhost
           REDIS_PORT: 6379
-          JWT_SECRET: ci-test-secret
+          JWT_SECRET: ci-test-secret-must-be-at-least-32-chars
+          ZKP_PEPPER: ci-zkp-pepper-must-be-at-least-32-chars
 
       - name: Run Playwright mobile tests
         run: npm run test -w e2e
         env:
           CI: true
-          BASE_URL: http://localhost:3000
+          BASE_URL: http://127.0.0.1:3000
 
       - uses: actions/upload-artifact@v4
         if: failure()

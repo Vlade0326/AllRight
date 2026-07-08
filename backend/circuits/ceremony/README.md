@@ -21,25 +21,30 @@ cd backend/circuits
 
 ## Ceremonia multi-parte (recomendado en producción real)
 
-1. **Coordinador** ejecuta setup inicial:
+1. **Coordinador** — setup inicial (sin contribuciones):
    ```bash
-   ./build-zkp-prod.sh   # genera geofence_0000.zkey
+   npm run zkp:ceremony:setup
+   # o: ./build-zkp-prod-setup.sh
    ```
 
-2. **Contribuidor A** (entorno aislado):
+2. **Contribuidores A, B, C** — cada uno en entorno aislado:
    ```bash
    ./ceremony/contribute.sh artifacts/prod/geofence_0000.zkey \
      artifacts/prod/geofence_0001.zkey "Org Security Team"
    ```
 
-3. **Contribuidor B** y **C** repiten con el zkey anterior.
-
-4. El último renombra su salida a `geofence_final.zkey`.
-
-5. **Verificación**:
+3. **Automatizado local** (3 contribuciones en secuencia, para validación):
    ```bash
-   ./ceremony/verify-ceremony.sh
+   npm run zkp:ceremony:run
    ```
+
+4. **Verificación**:
+   ```bash
+   npm run zkp:ceremony:verify
+   ```
+
+> `build-zkp-prod.sh` (usado por Docker prod) simula 3 contribuciones en un solo build.
+> Para ceremonia real distribuida, usar `build-zkp-prod-setup.sh` + `contribute.sh`.
 
 ## Reglas de seguridad
 
