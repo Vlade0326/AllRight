@@ -26,7 +26,11 @@ template GeofenceSquare(n) {
     lonUpper.in[0] <== userLon;
     lonUpper.in[1] <== maxLon;
 
-    isInside <== latLower.out * latUpper.out * lonLower.out * lonUpper.out;
+    signal latOk;
+signal lonOk;
+latOk <== latLower.out * latUpper.out;
+lonOk <== lonLower.out * lonUpper.out;
+isInside <== latOk * lonOk;
 }
 
 component main { public [minLat, maxLat, minLon, maxLon] } = GeofenceSquare(32);

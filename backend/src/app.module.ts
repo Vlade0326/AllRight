@@ -23,6 +23,7 @@ import { HttpMetricsInterceptor } from './presentation/interceptors/http-metrics
     ServeStaticModule.forRoot(
       {
         rootPath: join(__dirname, '..', 'public'),
+        exclude: ['/zkp/*path'],
       },
       {
         rootPath: getZkpArtifactsDir(),

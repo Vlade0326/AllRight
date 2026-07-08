@@ -12,16 +12,14 @@ if [ ! -d "$CIRCOMLIB/circuits" ]; then
   git clone --depth 1 https://github.com/iden3/circomlib.git "$CIRCOMLIB"
 fi
 
-cp "$CIRCOMLIB/circuits/comparators.circom" "$ROOT/comparators.circom"
-
 echo "[dev] Compilando circuito..."
-circom "$ROOT/geofence.circom" --r1cs --wasm --sym -o "$ARTIFACTS"
-
+circom "$ROOT/geofence.circom" --r1cs --wasm --sym -o "$ARTIFACTS" -l "$CIRCOMLIB/circuits"
+cp "$ARTIFACTS/geofence_js/geofence.wasm" "$ARTIFACTS/geofence.wasm"
 PTAU="$ARTIFACTS/pot12_final.ptau"
 if [ ! -f "$PTAU" ]; then
   echo "[dev] Descargando Powers of Tau (Hermez ptau12)..."
   curl -L -o "$ARTIFACTS/pot12_0000.ptau" \
-    https://hermez.s3-eu-west-1.amazonaws.com/powersOfTau28_hez_final_12.ptau
+    https://storage.googleapis.com/zkevm/ptau/powersOfTau28_hez_final_12.ptau
   cp "$ARTIFACTS/pot12_0000.ptau" "$PTAU"
 fi
 

@@ -12,10 +12,11 @@ if [ ! -d "$CIRCOMLIB/circuits" ]; then
   git clone --depth 1 https://github.com/iden3/circomlib.git "$CIRCOMLIB"
 fi
 
-cp "$CIRCOMLIB/circuits/comparators.circom" "$ROOT/comparators.circom"
+rm -f "$ROOT/comparators.circom"
 
 echo "[prod-setup] Compilando circuito geofence..."
-circom "$ROOT/geofence.circom" --r1cs --wasm --sym -o "$ARTIFACTS"
+circom "$ROOT/geofence.circom" --r1cs --wasm --sym -o "$ARTIFACTS" -l "$CIRCOMLIB/circuits"
+cp "$ARTIFACTS/geofence_js/geofence.wasm" "$ARTIFACTS/geofence.wasm"
 
 PTAU="$ARTIFACTS/pot12_final.ptau"
 if [ ! -f "$PTAU" ]; then

@@ -10,4 +10,7 @@ test-results/
 backend/circuits/artifacts/
 backend/circuits/.circomlib/
 backend/circuits/comparators.circom
+k8s/secret.yaml
+adapter_dump.txt
+util_dump.txt
 .DS_Store

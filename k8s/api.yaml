@@ -1,0 +1,87 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: allright-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: allright-api
+  template:
+    metadata:
+      labels:
+        app: allright-api
+    spec:
+      containers:
+        - name: allright-api
+          image: allright-api:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "3000"
+            - name: DB_HOST
+              value: "postgres"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_SYNCHRONIZE
+              value: "false"
+            - name: DB_MIGRATIONS_RUN
+              value: "true"
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: ZKP_ADAPTER
+              value: "snarkjs"
+            - name: ZKP_ARTIFACTS_ENV
+              value: "prod"
+            - name: JWT_EXPIRES_IN
+              value: "60m"
+            - name: GEOFENCE_LAT
+              value: "3.4516"
+            - name: GEOFENCE_LON
+              value: "-76.5320"
+            - name: GEOFENCE_RADIUS_KM
+              value: "0.5"
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: allright-secrets
+                  key: DB_USERNAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: allright-secrets
+                  key: DB_PASSWORD
+            - name: DB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: allright-secrets
+                  key: DB_DATABASE
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: allright-secrets
+                  key: JWT_SECRET
+            - name: ZKP_PEPPER
+              valueFrom:
+                secretKeyRef:
+                  name: allright-secrets
+                  key: ZKP_PEPPER
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: allright-api
+spec:
+  type: NodePort
+  selector:
+    app: allright-api
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30080
