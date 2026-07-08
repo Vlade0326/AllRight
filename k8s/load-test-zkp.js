@@ -1,6 +1,9 @@
 ﻿import http from "k6/http";
 import { check, sleep } from "k6";
 
+const BASE = __ENV.BASE_URL || "http://127.0.0.1:30080";
+const params = { timeout: "20s" };
+
 export const options = {
   vus: 5,
   duration: "60s",
@@ -9,9 +12,6 @@ export const options = {
     checks: ["rate > 0.95"],
   },
 };
-
-const BASE = "http://127.0.0.1:3100";
-const params = { timeout: "20s" };
 
 export function setup() {
   const res = http.post(

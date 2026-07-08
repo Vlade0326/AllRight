@@ -19,6 +19,13 @@
     "setup:prod": "powershell -ExecutionPolicy Bypass -File scripts/generate-production-secrets.ps1",
     "zkp:ceremony:verify": "docker run --rm -v ./backend/circuits:/circuits -w /circuits node:20-bookworm bash -c \"npm i -g snarkjs@0.7.5 && sed -i 's/\\r$//' ceremony/verify-ceremony.sh && chmod +x ceremony/verify-ceremony.sh && ./ceremony/verify-ceremony.sh\"",
     "zkp:ceremony:setup": "docker run --rm -v ./backend/circuits:/circuits -w /circuits node:20-bookworm bash -c \"apt-get update -qq && apt-get install -y -qq curl git && curl -L https://github.com/iden3/circom/releases/download/v2.1.9/circom-linux-amd64 -o /usr/local/bin/circom && chmod +x /usr/local/bin/circom && npm i -g snarkjs@0.7.5 && sed -i 's/\\r$//' build-zkp-prod-setup.sh ceremony/run-multi-party.sh ceremony/contribute.sh ceremony/verify-ceremony.sh && chmod +x build-zkp-prod-setup.sh ceremony/*.sh && ./build-zkp-prod-setup.sh\"",
-    "zkp:ceremony:run": "docker run --rm -v ./backend/circuits:/circuits -w /circuits node:20-bookworm bash -c \"npm i -g snarkjs@0.7.5 && sed -i 's/\\r$//' ceremony/run-multi-party.sh ceremony/contribute.sh ceremony/verify-ceremony.sh && chmod +x ceremony/*.sh && ./ceremony/run-multi-party.sh\""
+    "zkp:ceremony:run": "docker run --rm -v ./backend/circuits:/circuits -w /circuits node:20-bookworm bash -c \"npm i -g snarkjs@0.7.5 && sed -i 's/\\r$//' ceremony/run-multi-party.sh ceremony/contribute.sh ceremony/verify-ceremony.sh && chmod +x ceremony/*.sh && ./ceremony/run-multi-party.sh\"",
+    "k8s:deploy": "powershell -ExecutionPolicy Bypass -File scripts/k8s-deploy.ps1",
+    "k8s:teardown": "powershell -ExecutionPolicy Bypass -File scripts/k8s-teardown.ps1",
+    "loadtest:health": "k6 run k8s/load-test-health.js",
+    "loadtest:100": "k6 run k8s/load-test-100.js",
+    "loadtest:500": "k6 run k8s/load-test-500.js",
+    "loadtest:zkp": "k6 run k8s/load-test-zkp.js",
+    "loadtest:500:incluster": "powershell -ExecutionPolicy Bypass -File scripts/k8s-loadtest-500.ps1"
   }
 }

@@ -14,3 +14,9 @@ k8s/secret.yaml
 adapter_dump.txt
 util_dump.txt
 .DS_Store
+infra/terraform/**/.terraform/
+infra/terraform/**/*.tfstate
+infra/terraform/**/*.tfstate.*
+infra/terraform/**/.terraform.lock.hcl
+k8s/terraform-aws/
+k8s/terraform-gcp/

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: allright-api
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: allright-api
@@ -12,12 +12,33 @@ spec:
       labels:
         app: allright-api
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: allright-api
+                topologyKey: kubernetes.io/hostname
       containers:
         - name: allright-api
           image: allright-api:latest
           imagePullPolicy: Never
           ports:
             - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
           env:
             - name: NODE_ENV
               value: "production"

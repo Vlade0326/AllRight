@@ -1,6 +1,8 @@
 ﻿import http from "k6/http";
 import { check, sleep } from "k6";
 
+const BASE = __ENV.BASE_URL || "http://127.0.0.1:30080";
+
 export const options = {
   vus: 20,
   duration: "30s",
@@ -11,7 +13,7 @@ export const options = {
 };
 
 export default function () {
-  const res = http.get("http://127.0.0.1:3100/health");
+  const res = http.get(`${BASE}/health`);
   check(res, {
     "status is 200": (r) => r.status === 200,
   });
