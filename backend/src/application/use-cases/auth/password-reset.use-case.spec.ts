@@ -3,6 +3,7 @@ import { ForgotPasswordUseCase } from './forgot-password.use-case';
 import { ResetPasswordUseCase } from './reset-password.use-case';
 import { IUserRepository } from '../../../domain/ports/user.repository.port';
 import { ICachePort } from '../../../domain/ports/cache.port';
+import { IEmailPort } from '../../../domain/ports/email.port';
 import { ConfigService } from '@nestjs/config';
 
 describe('ForgotPasswordUseCase', () => {
@@ -24,8 +25,9 @@ describe('ForgotPasswordUseCase', () => {
     updatePassword: jest.fn(),
   };
   const config = { get: jest.fn((key: string) => (key === 'NODE_ENV' ? 'development' : 900)) } as unknown as ConfigService;
+  const email: jest.Mocked<IEmailPort> = { send: jest.fn() };
 
-  const useCase = new ForgotPasswordUseCase(users, cache, config);
+  const useCase = new ForgotPasswordUseCase(users, cache, email, config);
 
   it('no revela si el email existe', async () => {
     users.findByEmail.mockResolvedValue(null);
@@ -43,6 +45,7 @@ describe('ForgotPasswordUseCase', () => {
     });
     const result = await useCase.execute('a@b.com');
     expect(cache.set).toHaveBeenCalled();
+    expect(email.send).toHaveBeenCalled();
     expect(result.resetToken).toBeDefined();
   });
 });

@@ -15,6 +15,17 @@ $jwtSecret = New-Secret 48
 $zkpPepper = New-Secret 48
 $dbPassword = New-Secret 24
 $grafanaPassword = New-Secret 20
+$metricsToken = New-Secret 24
+
+$vapidKeys = & node -e "const w=require('web-push');const k=w.generateVAPIDKeys();console.log(k.publicKey+'|'+k.privateKey);" 2>$null
+if ($LASTEXITCODE -ne 0 -or -not $vapidKeys) {
+  $vapidPublic = New-Secret 32
+  $vapidPrivate = New-Secret 32
+} else {
+  $parts = $vapidKeys -split '\|'
+  $vapidPublic = $parts[0]
+  $vapidPrivate = $parts[1]
+}
 
 $content = @"
 # AUTO-GENERADO — $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
@@ -49,6 +60,21 @@ PROMETHEUS_PORT=9090
 GRAFANA_PORT=3001
 GRAFANA_USER=admin
 GRAFANA_PASSWORD=$grafanaPassword
+
+METRICS_TOKEN=$metricsToken
+METRICS_ALLOW_PRIVATE=true
+APP_URL=https://localhost:3443
+
+VAPID_PUBLIC_KEY=$vapidPublic
+VAPID_PRIVATE_KEY=$vapidPrivate
+VAPID_SUBJECT=mailto:admin@allright.app
+
+# SMTP (opcional — sin SMTP_HOST se usa log en consola)
+# SMTP_HOST=smtp.example.com
+# SMTP_PORT=587
+# SMTP_USER=
+# SMTP_PASS=
+# SMTP_FROM=noreply@allright.app
 "@
 
 Set-Content -Path $outFile -Value $content -Encoding UTF8

@@ -1,9 +1,11 @@
 import { ProofHistory } from '../components/ProofHistory';
 import { MapView } from '../components/MapView';
 import { useLocationApp } from '../hooks/useLocationApp';
+import { usePushNotifications } from '../hooks/usePushNotifications';
 
 export function AppPage() {
   const app = useLocationApp();
+  usePushNotifications();
 
   if (app.loading) {
     return (

@@ -19,6 +19,10 @@ import { TypeOrmAuditRepository } from './persistence/typeorm/audit.repository';
 import { UserOrmEntity } from './persistence/typeorm/user.orm-entity';
 import { AuditLogOrmEntity } from './persistence/typeorm/audit-log.orm-entity';
 import { RateLimitService } from './security/rate-limit.service';
+import { ConsoleEmailAdapter } from './email/console-email.adapter';
+import { SmtpEmailAdapter } from './email/smtp-email.adapter';
+import { emailProvider } from './email/email.provider';
+import { PushNotificationService } from './notifications/push-notification.service';
 import { zkpAdapterProvider } from './zkp/zkp.provider';
 
 const defaultZone = new GeofenceZone(
@@ -62,6 +66,10 @@ const defaultZone = new GeofenceZone(
     RateLimitService,
     TypeOrmUserRepository,
     TypeOrmAuditRepository,
+    ConsoleEmailAdapter,
+    SmtpEmailAdapter,
+    emailProvider,
+    PushNotificationService,
     zkpAdapterProvider,
     { provide: USER_REPOSITORY, useExisting: TypeOrmUserRepository },
     { provide: AUDIT_REPOSITORY, useExisting: TypeOrmAuditRepository },
@@ -76,7 +84,9 @@ const defaultZone = new GeofenceZone(
     CACHE_PORT,
     LOCATION_PROOF_PORT,
     GEOFENCE_ZONE,
+    emailProvider,
     TypeOrmModule,
+    PushNotificationService,
   ],
 })
 export class InfrastructureModule {}

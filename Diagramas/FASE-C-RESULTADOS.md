@@ -15,31 +15,39 @@
 | Rate limit brute force | PASS (429) |
 | forgot-password sin enumeracion | PASS |
 | reset-password token invalido | PASS (401) |
-| /metrics expuesto | PASS (INFO: restringir en prod) |
+| /metrics sin token | PASS (401 si METRICS_TOKEN activo) |
 
-Reporte: `Diagramas/security-pentest-report.txt`
+Reportes:
+- `Diagramas/security-pentest-report.txt`
+- `Diagramas/security-pentest-report.html` (`npm run security:pentest:html`)
 
 ## Auditoria forense RAM
 
-**Ejecucion:** 5000 intentos en ~25 min  
-**Resultado:** 2353 tokens OK, 2647 errores (rate limit global en login — corregido)  
-**Contenedor escaneado:** `allright_api`
+**Ejecucion:** 5000 intentos  
+Re-ejecutar: `npm run security:forensic`
 
-Reporte: `Diagramas/forensic-ram-audit-report.txt`  
-Re-ejecutar tras rebuild: `npm run security:forensic`
+Reporte: `Diagramas/forensic-ram-audit-report.txt`
 
-## Nuevos endpoints Fase C
+## Endpoints Fase C
 
 | Endpoint | Descripcion |
 |----------|-------------|
-| `POST /auth/forgot-password` | Solicita token de reset (Redis, 15 min) |
+| `POST /auth/forgot-password` | Token reset (Redis 15 min) + email SMTP |
 | `POST /auth/reset-password` | Restablece contraseña con token |
-| `POST /auth/change-password` | Cambio con JWT (ya existente) |
+| `POST /auth/change-password` | Cambio con JWT |
 
 ## Rate limiting
 
 - Global: 120 req/min por IP+ruta
-- Login fallido: 10 intentos / 5 min por IP (exitosos no cuentan)
+- Login fallido: 10 intentos / 5 min por IP
+
+## Producción
+
+| Variable | Uso |
+|----------|-----|
+| `METRICS_TOKEN` | Obligatorio en prod — protege `/metrics` |
+| `METRICS_ALLOW_PRIVATE` | `true` para scrape interno (Prometheus) |
+| `SMTP_HOST` | Email forgot-password (sin host → log consola) |
 
 ## Burp Suite
 

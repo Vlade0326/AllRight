@@ -101,6 +101,13 @@ spec:
                 secretKeyRef:
                   name: allright-secrets
                   key: ZKP_PEPPER
+            - name: METRICS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: allright-secrets
+                  key: METRICS_TOKEN
+            - name: METRICS_ALLOW_PRIVATE
+              value: "true"
 ---
 apiVersion: v1
 kind: Service

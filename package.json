@@ -35,6 +35,7 @@
     "loadtest:500:incluster": "powershell -ExecutionPolicy Bypass -File scripts/k8s-loadtest-500.ps1",
     "security:forensic": "powershell -ExecutionPolicy Bypass -File scripts/security/forensic-ram-audit.ps1",
     "security:pentest": "powershell -ExecutionPolicy Bypass -File scripts/security/api-pentest.ps1",
+    "security:pentest:html": "powershell -ExecutionPolicy Bypass -File scripts/security/generate-pentest-html.ps1",
     "security:burp": "echo Ver scripts/security/BURP-SUITE.md",
     "docs:pdf": "node scripts/generate-docs-pdf.js"
   }

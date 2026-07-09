@@ -4,6 +4,7 @@ import { ILocationProofPort } from '../../../domain/ports/location-proof.port';
 import { ICachePort } from '../../../domain/ports/cache.port';
 import { IAuditRepository } from '../../../domain/ports/audit.repository.port';
 import { MetricsService } from '../../../infrastructure/observability/metrics.service';
+import { PushNotificationService } from '../../../infrastructure/notifications/push-notification.service';
 import { AUDIT_REPOSITORY, CACHE_PORT, LOCATION_PROOF_PORT } from '../../tokens';
 
 const CONCURRENT_USERS_KEY = 'allright:concurrent_users';
@@ -17,6 +18,7 @@ export class VerifyLocationProofUseCase {
     @Inject(CACHE_PORT) private readonly cache: ICachePort,
     @Inject(AUDIT_REPOSITORY) private readonly audit: IAuditRepository,
     private readonly metrics: MetricsService,
+    private readonly push: PushNotificationService,
   ) {}
 
   async execute(userId: string, proof: LocationProof) {
@@ -40,6 +42,11 @@ export class VerifyLocationProofUseCase {
         await this.cache.sadd(CONCURRENT_USERS_KEY, userId);
         await this.cache.expire(CONCURRENT_USERS_KEY, USER_SESSION_TTL);
         this.metrics.recordLocationUpdate('success', result.zoneId);
+        await this.push.notifyUser(
+          userId,
+          'Ubicación verificada',
+          'Tu proof ZKP fue verificado dentro de la zona segura.',
+        );
       } else if (result.valid && !result.isInside) {
         this.metrics.recordLocationUpdate('outside_zone', result.zoneId);
       } else {

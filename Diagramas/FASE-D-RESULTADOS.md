@@ -1,61 +1,60 @@
 # Fase D — Producto y despliegue continuo
 
-## Historial de proofs (UI móvil)
+## Completado
 
-| Componente | Detalle |
-|------------|---------|
-| `GET /location/history` | Historial ZKP del usuario autenticado |
-| `POST /location/prove/record` | Registro de proofs generados en cliente (snarkjs) |
-| Auditoría | Eventos `ZKP_PROVE` / `ZKP_VERIFY` en `audit_logs` |
-| UI | Panel "Historial proofs" con refresh automático |
-
-## Frontend React (Vite)
-
-| Ruta | Página |
+| Ítem | Estado |
 |------|--------|
-| `/` | Login (`index.html`) |
-| `/app.html` | Mapa + ZKP + historial (`app.html`) |
+| Historial proofs UI + API | ✅ |
+| Frontend React (Vite) | ✅ |
+| HTTPS Caddy (`docker:https`) | ✅ |
+| K8s Ingress TLS (`k8s:tls`) | ✅ |
+| CD → GHCR (`cd.yml`) | ✅ |
+| Smoke test post-deploy | ✅ |
+| Deploy K8s opcional (`KUBE_CONFIG_DATA`) | ✅ |
+| Push notifications (Web Push) | ✅ |
+| `/metrics` restringido en prod | ✅ |
+| SMTP forgot-password | ✅ |
+| Reporte pentest HTML | ✅ |
 
-**Workspace:** `frontend/` — React 18 + Leaflet + TypeScript
+## Historial proofs
+
+- `GET /location/history`
+- `POST /location/prove/record`
+- Auditoría `ZKP_PROVE` / `ZKP_VERIFY`
+
+## Frontend React
 
 ```bash
-npm run dev:web      # Vite dev server :5173 (proxy API)
-npm run build:web    # Build → backend/public
-npm run build        # Frontend + API
+npm run dev:web
+npm run build:web
 ```
 
-## HTTPS para GPS móvil
+Rutas: `/` (login), `/app.html` (mapa + ZKP + historial + push)
 
-Los navegadores exigen **contexto seguro** (HTTPS o `localhost`) para `navigator.geolocation`.
+## HTTPS GPS móvil
 
-| Modo | Comando | URL |
-|------|---------|-----|
-| Docker + Caddy TLS | `npm run docker:https` | `https://<host>:3443` |
-| Docker prod + TLS | `npm run docker:prod:https` | `https://<host>:3443` |
-| Kind Ingress | `npm run k8s:tls` + `npm run k8s:deploy` | `https://allright.local` |
+```bash
+npm run docker:https          # https://<host>:3443
+npm run docker:prod:https     # prod + TLS
+npm run k8s:tls && npm run k8s:deploy   # https://allright.local
+```
 
-Config: `infra/caddy/Caddyfile`, `infra/docker/docker-compose.https.yml`
+## Push notifications
 
-## CD automático (GitHub Actions)
+1. Configurar `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` (`npm run setup:prod`)
+2. En la app, aceptar permiso de notificaciones
+3. Notificación al verificar proof válido en zona
 
-Workflow: `.github/workflows/cd.yml`
+## CD
 
-| Job | Trigger `main` | Acción |
-|-----|----------------|--------|
-| `publish-image` | push | Build `Dockerfile.prod` → push GHCR |
-| `smoke-test` | post-publish | Health + login + static pages |
+Workflow `.github/workflows/cd.yml`:
+- `publish-image` → GHCR
+- `smoke-test`
+- `deploy-k8s` (si existe secret `KUBE_CONFIG_DATA`)
 
-Imagen: `ghcr.io/<owner>/AllRight:latest` y `:sha`
+## Pendiente manual
 
-## CI actualizado
-
-- `npm run build` incluye frontend React
-- `docker-build` usa `Dockerfile.prod` (raíz del repo)
-- E2E Playwright compatible con `app.html` React
-
-## Pendiente Fase D
-
-- [ ] Push notifications
-- [ ] Deploy K8s automático (secret `KUBE_CONFIG_DATA`)
-- [ ] Burp Suite manual + reporte HTML
-- [ ] Restringir `/metrics` en producción
+- [ ] Burp Suite análisis profundo (guía en `scripts/security/BURP-SUITE.md`)
+- [ ] Probar GPS real en móvil vía `https://<IP>:3443`
+- [ ] Configurar SMTP real en `.env.production`
+- [ ] Re-ejecutar forense 5000/5000 tras rebuild prod

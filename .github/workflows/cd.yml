@@ -119,3 +119,23 @@ jobs:
           REDIS_PORT: 6379
           JWT_SECRET: cd-smoke-test-secret-32-chars-min
           ZKP_PEPPER: cd-smoke-zkp-pepper-32-chars-min
+
+  deploy-k8s:
+    runs-on: ubuntu-latest
+    needs: publish-image
+    if: ${{ secrets.KUBE_CONFIG_DATA != '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: azure/setup-kubectl@v4
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > ~/.kube/config
+
+      - name: Update deployment image
+        run: |
+          IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
+          kubectl set image deployment/allright-api allright-api="$IMAGE" --record || true
+          kubectl rollout status deployment/allright-api --timeout=180s || true

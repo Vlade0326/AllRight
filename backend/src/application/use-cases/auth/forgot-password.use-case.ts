@@ -3,13 +3,15 @@ import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'crypto';
 import { IUserRepository } from '../../../domain/ports/user.repository.port';
 import { ICachePort } from '../../../domain/ports/cache.port';
-import { USER_REPOSITORY, CACHE_PORT } from '../../tokens';
+import { IEmailPort } from '../../../domain/ports/email.port';
+import { USER_REPOSITORY, CACHE_PORT, EMAIL_PORT } from '../../tokens';
 
 @Injectable()
 export class ForgotPasswordUseCase {
   constructor(
     @Inject(USER_REPOSITORY) private readonly users: IUserRepository,
     @Inject(CACHE_PORT) private readonly cache: ICachePort,
+    @Inject(EMAIL_PORT) private readonly email: IEmailPort,
     private readonly config: ConfigService,
   ) {}
 
@@ -21,6 +23,15 @@ export class ForgotPasswordUseCase {
     if (user) {
       resetToken = randomBytes(32).toString('hex');
       await this.cache.set(`pwd-reset:${resetToken}`, user.id, ttlSec);
+
+      const appUrl = this.config.get<string>('APP_URL', 'http://localhost:3000');
+      const resetUrl = `${appUrl}/?reset=${resetToken}`;
+      await this.email.send({
+        to: email,
+        subject: 'Restablecer contraseña — AllRight',
+        text: `Solicitaste restablecer tu contraseña. Usa este enlace (válido 15 min): ${resetUrl}`,
+        html: `<p>Solicitaste restablecer tu contraseña.</p><p><a href="${resetUrl}">Restablecer contraseña</a></p>`,
+      });
     }
 
     const response: Record<string, string> = {

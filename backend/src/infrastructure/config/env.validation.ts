@@ -68,5 +68,10 @@ export function validateEnv(config: Record<string, unknown>) {
     throw new Error('DB_SYNCHRONIZE must be false in production');
   }
 
+  const metricsToken = String(config.METRICS_TOKEN ?? '');
+  if (metricsToken.length < 16) {
+    throw new Error('METRICS_TOKEN must be at least 16 characters in production');
+  }
+
   return validated;
 }

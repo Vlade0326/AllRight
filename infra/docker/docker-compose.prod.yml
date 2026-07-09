@@ -16,6 +16,7 @@ services:
       DB_MIGRATIONS_RUN: "true"
       ZKP_ADAPTER: snarkjs
       ZKP_ARTIFACTS_ENV: prod
+      METRICS_ALLOW_PRIVATE: "true"
     deploy:
       resources:
         limits:

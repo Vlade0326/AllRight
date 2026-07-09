@@ -5,10 +5,12 @@ import {
   Get,
   Res,
   Header,
+  UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { MetricsService } from '../../infrastructure/observability/metrics.service';
 import { SkipRateLimit } from '../decorators/skip-rate-limit.decorator';
+import { MetricsGuard } from '../guards/metrics.guard';
 
 @Controller()
 @SkipRateLimit()
@@ -16,6 +18,7 @@ export class MetricsController {
   constructor(private readonly metrics: MetricsService) {}
 
   @Get('metrics')
+  @UseGuards(MetricsGuard)
   @Header('Content-Type', 'text/plain; version=0.0.4; charset=utf-8')
   async getMetrics(@Res() res: Response) {
     const data = await this.metrics.getMetrics();
