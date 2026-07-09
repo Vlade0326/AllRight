@@ -8,6 +8,7 @@ import { LogActionUseCase } from './use-cases/audit/log-action.use-case';
 import { GenerateLocationProofUseCase } from './use-cases/location/generate-location-proof.use-case';
 import { VerifyLocationProofUseCase } from './use-cases/location/verify-location-proof.use-case';
 import { UpdateLocationUseCase } from './use-cases/location/update-location.use-case';
+import { GetProofHistoryUseCase } from './use-cases/location/get-proof-history.use-case';
 import { ChangePasswordUseCase } from './use-cases/auth/change-password.use-case';
 import { ForgotPasswordUseCase } from './use-cases/auth/forgot-password.use-case';
 import { ResetPasswordUseCase } from './use-cases/auth/reset-password.use-case';
@@ -34,6 +35,7 @@ import { ResetPasswordUseCase } from './use-cases/auth/reset-password.use-case';
     VerifyLocationProofUseCase,
     UpdateLocationUseCase,
     ChangePasswordUseCase,
+    GetProofHistoryUseCase,
     ForgotPasswordUseCase,
     ResetPasswordUseCase,
   ],
@@ -46,6 +48,7 @@ import { ResetPasswordUseCase } from './use-cases/auth/reset-password.use-case';
     VerifyLocationProofUseCase,
     UpdateLocationUseCase,
     ChangePasswordUseCase,
+    GetProofHistoryUseCase,
     ForgotPasswordUseCase,
     ResetPasswordUseCase,
   ],

@@ -1,0 +1,35 @@
+FROM node:20-bookworm AS zkp-builder
+RUN apt-get update && apt-get install -y curl git && rm -rf /var/lib/apt/lists/*
+RUN curl -L https://github.com/iden3/circom/releases/download/v2.1.9/circom-linux-amd64 \
+  -o /usr/local/bin/circom && chmod +x /usr/local/bin/circom
+RUN npm install -g snarkjs@0.7.5
+WORKDIR /circuits
+COPY backend/circuits/ ./
+RUN sed -i 's/\r$//' build-zkp-prod.sh && chmod +x build-zkp-prod.sh && ./build-zkp-prod.sh
+
+FROM node:20-alpine AS frontend
+WORKDIR /repo/frontend
+COPY frontend/package.json ./
+RUN npm install
+COPY frontend/ ./
+RUN npm run build
+
+FROM node:20-alpine AS api-builder
+WORKDIR /app
+COPY backend/package.json ./
+RUN npm install --legacy-peer-deps
+COPY backend/ ./
+COPY --from=frontend /repo/backend/public ./public
+RUN npm run build
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+ENV ZKP_ARTIFACTS_ENV=prod
+COPY backend/package.json ./
+RUN npm install --omit=dev --legacy-peer-deps
+COPY --from=api-builder /app/dist ./dist
+COPY --from=api-builder /app/public ./public
+COPY --from=zkp-builder /circuits/artifacts/prod ./circuits/artifacts/prod
+EXPOSE 3000
+CMD ["sh", "-c", "node dist/infrastructure/persistence/typeorm/run-migrations.js && node dist/main.js"]

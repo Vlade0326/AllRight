@@ -1,0 +1,25 @@
+# HTTPS overlay — Caddy terminates TLS and proxies to the API.
+# Usage: npm run docker:https  (or docker:prod:https)
+services:
+  api:
+    ports: []
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: allright_caddy
+    restart: unless-stopped
+    ports:
+      - "${HTTPS_PORT:-3443}:443"
+      - "${HTTP_PORT:-3080}:80"
+    volumes:
+      - ../caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+    networks:
+      - allright-net
+
+volumes:
+  caddy_data:
+  caddy_config:

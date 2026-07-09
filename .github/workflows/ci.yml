@@ -52,7 +52,7 @@ jobs:
         run: npm run test -w backend
 
       - name: Build
-        run: npm run build -w backend
+        run: npm run build
         env:
           DB_HOST: localhost
           DB_PORT: 5432
@@ -102,7 +102,7 @@ jobs:
 
       - name: Build & start API
         run: |
-          npm run build -w backend
+          npm run build
           npm run start:prod -w backend &
           for i in $(seq 1 30); do
             curl -sf http://127.0.0.1:3000/health && break
@@ -141,4 +141,4 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build Docker image
-        run: docker build -t allright-api:${{ github.sha }} ./backend
+        run: docker build -f Dockerfile.prod -t allright-api:${{ github.sha }} .

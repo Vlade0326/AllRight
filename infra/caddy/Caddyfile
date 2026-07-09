@@ -1,0 +1,15 @@
+# TLS termination for AllRight API + static UI (GPS requires HTTPS on mobile)
+# Caddy auto-generates internal CA certs (self-signed) for local/dev use.
+
+{
+	auto_https disable_redirects
+}
+
+:443 {
+	tls internal
+	reverse_proxy api:3000
+}
+
+:80 {
+	redir https://{host}{uri} permanent
+}

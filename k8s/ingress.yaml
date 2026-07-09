@@ -1,0 +1,25 @@
+# TLS Ingress for Kind/local — requires ingress-nginx controller.
+# Install: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: allright-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - allright.local
+      secretName: allright-tls
+  rules:
+    - host: allright.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: allright-api
+                port:
+                  number: 3000

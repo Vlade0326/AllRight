@@ -6,6 +6,8 @@ import { VerifyLocationProofUseCase } from '../../application/use-cases/location
 import { LocationProof } from '../../domain/entities/location-proof.entity';
 import { GeofenceZone } from '../../domain/entities/geofence-zone.entity';
 import { GEOFENCE_ZONE } from '../../application/tokens';
+import { GetProofHistoryUseCase } from '../../application/use-cases/location/get-proof-history.use-case';
+import { LogActionUseCase } from '../../application/use-cases/audit/log-action.use-case';
 import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('location')
@@ -14,6 +16,8 @@ export class LocationController {
   constructor(
     private readonly generateProof: GenerateLocationProofUseCase,
     private readonly verifyProof: VerifyLocationProofUseCase,
+    private readonly proofHistory: GetProofHistoryUseCase,
+    private readonly logAction: LogActionUseCase,
     private readonly config: ConfigService,
     @Inject(GEOFENCE_ZONE) private readonly zone: GeofenceZone,
   ) {}
@@ -43,6 +47,19 @@ export class LocationController {
       zkpAssetsAvailable: zkpArtifactsAvailable(),
       zkpArtifactsEnv: paths.base.split(/[/\\]/).pop(),
     };
+  }
+
+  @Get('history')
+  history(@Req() req: { user: { sub: string } }) {
+    return this.proofHistory.execute(req.user.sub);
+  }
+
+  @Post('prove/record')
+  recordProve(
+    @Body() body: { adapter?: string; isInside: boolean; zoneId: string },
+    @Req() req: { user: { sub: string } },
+  ) {
+    return this.logAction.execute(req.user.sub, 'ZKP_PROVE', body);
   }
 
   @Post('prove')

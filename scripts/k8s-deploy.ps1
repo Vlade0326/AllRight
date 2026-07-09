@@ -19,7 +19,7 @@ if ($clusters -notcontains $clusterName) {
 }
 
 Write-Host "==> Construyendo imagen allright-api:latest (Dockerfile.prod)..."
-docker build -f backend/Dockerfile.prod -t allright-api:latest ./backend
+docker build -f Dockerfile.prod -t allright-api:latest .
 if ($LASTEXITCODE -ne 0) { throw "Fallo build de imagen" }
 
 Write-Host "==> Cargando imagen en Kind..."
@@ -35,6 +35,15 @@ kubectl apply -f k8s/postgres.yaml
 kubectl apply -f k8s/redis.yaml
 kubectl apply -f k8s/api.yaml
 
+$tlsSecret = Join-Path $root "k8s\tls-secret.yaml"
+if (Test-Path $tlsSecret) {
+  Write-Host "==> Aplicando Ingress TLS..."
+  kubectl apply -f $tlsSecret
+  kubectl apply -f k8s/ingress.yaml
+} else {
+  Write-Host "    (Opcional) TLS: npm run k8s:tls para HTTPS en Kind"
+}
+
 Write-Host "==> Esperando pods..."
 kubectl wait --for=condition=ready pod -l app=postgres --timeout=120s
 kubectl wait --for=condition=ready pod -l app=redis --timeout=120s
@@ -43,6 +52,9 @@ kubectl wait --for=condition=ready pod -l app=allright-api --timeout=180s
 Write-Host ""
 Write-Host "Despliegue completado." -ForegroundColor Green
 Write-Host "  API (NodePort): http://127.0.0.1:30080"
+if (Test-Path $tlsSecret) {
+  Write-Host "  API (HTTPS Ingress): https://allright.local (hosts: 127.0.0.1 allright.local)"
+}
 Write-Host "  Pods:"
 kubectl get pods -o wide
 Write-Host "  Nodos:"

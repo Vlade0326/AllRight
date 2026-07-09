@@ -37,6 +37,9 @@ test.describe('Post-login App — mobile', () => {
     await expect(page.getByTestId('app-status')).toContainText(/verificado/i, {
       timeout: 15000,
     });
+
+    await expect(page.getByTestId('proof-history')).toBeVisible();
+    await expect(page.getByTestId('history-item')).toHaveCount(2, { timeout: 5000 });
   });
 
   test('check geofence returns secure inside zone', async ({ page }) => {
