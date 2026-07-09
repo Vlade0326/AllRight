@@ -1,14 +1,16 @@
 # Fase C — Auditoría forense RAM (5.000 sesiones)
 $ErrorActionPreference = "Stop"
-$root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+$root = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path))
 Set-Location $root
 
-$baseUrl = $env:BASE_URL ?? "http://127.0.0.1:3000"
-$sessions = [int]($env:FORENSIC_SESSIONS ?? "5000")
-$batchSize = [int]($env:FORENSIC_BATCH ?? "100")
+$baseUrl = if ($env:BASE_URL) { $env:BASE_URL } else { "http://127.0.0.1:3000" }
+$sessionsRaw = if ($env:FORENSIC_SESSIONS) { $env:FORENSIC_SESSIONS } else { "5000" }
+$batchRaw = if ($env:FORENSIC_BATCH) { $env:FORENSIC_BATCH } else { "100" }
+$sessions = [int]$sessionsRaw
+$batchSize = [int]$batchRaw
 $reportPath = Join-Path $root "Diagramas\forensic-ram-audit-report.txt"
-$email = $env:FORENSIC_EMAIL ?? "usuario@allright.app"
-$password = $env:FORENSIC_PASSWORD ?? "AllRight2026!Secure"
+$email = if ($env:FORENSIC_EMAIL) { $env:FORENSIC_EMAIL } else { "usuario@allright.app" }
+$password = if ($env:FORENSIC_PASSWORD) { $env:FORENSIC_PASSWORD } else { "AllRight2026!Secure" }
 
 Write-Host "==> Auditoría forense: $sessions sesiones contra $baseUrl"
 
@@ -44,7 +46,7 @@ Write-Host "==> Sesiones: $($tokens.Count) OK, $errors errores en $($elapsed.Tot
 
 # 2. Escaneo de memoria del contenedor API (Linux/Docker)
 $findings = [System.Collections.Generic.List[string]]::new()
-$container = (docker ps --filter "name=allright-api" --format "{{.Names}}" 2>$null | Select-Object -First 1)
+$container = (docker ps --filter "name=allright" --format "{{.Names}}" 2>$null | Where-Object { $_ -match "api" } | Select-Object -First 1)
 
 if ($container) {
   Write-Host "==> Escaneando memoria del contenedor: $container"
@@ -57,7 +59,7 @@ if ($container) {
     "BEGIN PRIVATE KEY"
   )
   foreach ($pat in $patterns) {
-    $hits = docker exec $container sh -c "grep -a -r -l '$pat' /proc/1/ 2>/dev/null | head -5" 2>$null
+    $hits = docker exec $container sh -c "timeout 5 grep -a -r -l '$pat' /proc/1/environ /proc/1/cmdline 2>/dev/null | head -3" 2>$null
     if ($hits) {
       $findings.Add("PATTERN '$pat' encontrado en: $hits")
     }

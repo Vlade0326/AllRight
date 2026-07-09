@@ -31,10 +31,11 @@ export class RateLimitGuard implements CanActivate {
     const ip = this.resolveClientIp(request);
     const route = `${request.method}:${request.path}`;
 
-    const result =
-      request.method === 'POST' && request.path === '/auth/login'
-        ? await this.rateLimit.checkLogin(ip)
-        : await this.rateLimit.checkGlobal(ip, route);
+    if (request.method === 'POST' && request.path === '/auth/login') {
+      return true;
+    }
+
+    const result = await this.rateLimit.checkGlobal(ip, route);
 
     response.setHeader('X-RateLimit-Limit', String(result.limit));
     response.setHeader('X-RateLimit-Remaining', String(result.remaining));

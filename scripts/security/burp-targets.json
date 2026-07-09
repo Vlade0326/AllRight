@@ -13,6 +13,18 @@
     },
     {
       "method": "POST",
+      "path": "/auth/forgot-password",
+      "body": { "email": "usuario@allright.app" },
+      "tests": ["user_enumeration", "token_leak"]
+    },
+    {
+      "method": "POST",
+      "path": "/auth/reset-password",
+      "body": { "token": "INVALID", "newPassword": "NewPass2026!" },
+      "tests": ["token_bruteforce", "weak_password"]
+    },
+    {
+      "method": "POST",
       "path": "/auth/change-password",
       "auth": "Bearer",
       "body": { "currentPassword": "AllRight2026!Secure", "newPassword": "NewPass2026!Secure" },

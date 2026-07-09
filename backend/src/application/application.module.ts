@@ -9,6 +9,8 @@ import { GenerateLocationProofUseCase } from './use-cases/location/generate-loca
 import { VerifyLocationProofUseCase } from './use-cases/location/verify-location-proof.use-case';
 import { UpdateLocationUseCase } from './use-cases/location/update-location.use-case';
 import { ChangePasswordUseCase } from './use-cases/auth/change-password.use-case';
+import { ForgotPasswordUseCase } from './use-cases/auth/forgot-password.use-case';
+import { ResetPasswordUseCase } from './use-cases/auth/reset-password.use-case';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { ChangePasswordUseCase } from './use-cases/auth/change-password.use-case
     VerifyLocationProofUseCase,
     UpdateLocationUseCase,
     ChangePasswordUseCase,
+    ForgotPasswordUseCase,
+    ResetPasswordUseCase,
   ],
   exports: [
     JwtModule,
@@ -42,6 +46,8 @@ import { ChangePasswordUseCase } from './use-cases/auth/change-password.use-case
     VerifyLocationProofUseCase,
     UpdateLocationUseCase,
     ChangePasswordUseCase,
+    ForgotPasswordUseCase,
+    ResetPasswordUseCase,
   ],
 })
 export class ApplicationModule {}

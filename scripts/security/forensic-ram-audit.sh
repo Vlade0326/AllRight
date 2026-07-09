@@ -34,7 +34,7 @@ done
 ELAPSED=$(( $(date +%s) - START ))
 FINDINGS=""
 
-CONTAINER=$(docker ps --filter "name=allright-api" --format "{{.Names}}" 2>/dev/null | head -1)
+CONTAINER=$(docker ps --filter "name=allright" --format "{{.Names}}" 2>/dev/null | grep -i api | head -1)
 if [ -n "$CONTAINER" ]; then
   echo "==> Escaneando memoria: $CONTAINER"
   for pat in "AllRight2026" "JWT_SECRET" "ZKP_PEPPER" "password"; do

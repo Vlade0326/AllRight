@@ -42,9 +42,23 @@ export class RateLimitService {
     return this.check(`rl:global:${ip}:${route}`, max, windowSec);
   }
 
-  async checkLogin(ip: string): Promise<RateLimitResult> {
+  async checkLoginFailure(ip: string): Promise<RateLimitResult> {
     const windowSec = this.config.get<number>('RATE_LIMIT_LOGIN_WINDOW_SEC', 300);
     const max = this.config.get<number>('RATE_LIMIT_LOGIN_MAX', 10);
-    return this.check(`rl:login:${ip}`, max, windowSec);
+    return this.check(`rl:login-fail:${ip}`, max, windowSec);
+  }
+
+  async isLoginBlocked(ip: string): Promise<RateLimitResult> {
+    const windowSec = this.config.get<number>('RATE_LIMIT_LOGIN_WINDOW_SEC', 300);
+    const max = this.config.get<number>('RATE_LIMIT_LOGIN_MAX', 10);
+    const key = `rl:login-fail:${ip}`;
+    const current = await this.cache.get(key);
+    const count = current ? parseInt(current, 10) : 0;
+    return {
+      allowed: count < max,
+      remaining: Math.max(0, max - count),
+      limit: max,
+      retryAfterSec: windowSec,
+    };
   }
 }
