@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { apiFetch } from '../api/client';
+import { DetectedBeacon, getBluetooth, startIBeaconScan } from '../ble/scanBeacons';
 
 export interface BeaconZone {
   id: string;
@@ -28,8 +29,11 @@ export function BleProximity({ onStatus }: BleProximityProps) {
   const [selectedId, setSelectedId] = useState('');
   const [rssi, setRssi] = useState(-55);
   const [busy, setBusy] = useState(false);
-  const webBt =
-    typeof navigator !== 'undefined' && 'bluetooth' in navigator;
+  const [scanning, setScanning] = useState(false);
+  const [lastHit, setLastHit] = useState<string>('');
+  const scanRef = useRef<{ stop: () => void } | null>(null);
+  const lastReportRef = useRef<{ key: string; at: number }>({ key: '', at: 0 });
+  const webBt = !!getBluetooth();
 
   useEffect(() => {
     (async () => {
@@ -43,6 +47,11 @@ export function BleProximity({ onStatus }: BleProximityProps) {
         // non-critical
       }
     })();
+
+    return () => {
+      scanRef.current?.stop();
+      scanRef.current = null;
+    };
   }, []);
 
   async function report(zone: BeaconZone, signal: number) {
@@ -78,23 +87,48 @@ export function BleProximity({ onStatus }: BleProximityProps) {
     await report(zone, rssi);
   }
 
-  async function scanWebBluetooth() {
+  async function onBeaconDetected(hit: DetectedBeacon) {
+    const label = `${hit.frame.uuid.slice(0, 8)}… ${hit.frame.major}/${hit.frame.minor} @ ${hit.rssi} dBm`;
+    setLastHit(label);
+
+    if (!hit.zone) {
+      onStatus(`iBeacon detectado (no whitelist): ${hit.frame.major}/${hit.frame.minor}`, true);
+      return;
+    }
+
+    // Throttle identical reports (~2s) to avoid flooding API while scanning
+    const key = `${hit.zone.id}:${Math.round(hit.rssi / 3)}`;
+    const now = Date.now();
+    if (lastReportRef.current.key === key && now - lastReportRef.current.at < 2000) {
+      return;
+    }
+    lastReportRef.current = { key, at: now };
+    await report(hit.zone, hit.rssi);
+  }
+
+  async function startScan() {
     if (!webBt) {
-      onStatus('Web Bluetooth no disponible — usa simulador', true);
+      onStatus('Web Bluetooth no disponible — usa simulador o Chrome/Android + HTTPS', true);
       return;
     }
     try {
-      // PoC: request any BLE device; map first configured zone with simulated RSSI
-      // Real iBeacon parsing requires manufacturer data (Chrome Android).
-      await (navigator as Navigator & { bluetooth: { requestDevice: (o: unknown) => Promise<unknown> } }).bluetooth.requestDevice({
-        acceptAllDevices: true,
-        optionalServices: [],
+      setScanning(true);
+      onStatus('Escaneando iBeacon (Apple 0x004C)…');
+      const handle = await startIBeaconScan(zones, (hit) => {
+        void onBeaconDetected(hit);
       });
-      const zone = zones[0];
-      if (zone) await report(zone, -50);
+      scanRef.current = handle;
     } catch (e) {
-      onStatus('Escaneo BLE cancelado o fallido: ' + (e as Error).message, true);
+      setScanning(false);
+      onStatus('Escaneo BLE: ' + (e as Error).message, true);
     }
+  }
+
+  function stopScan() {
+    scanRef.current?.stop();
+    scanRef.current = null;
+    setScanning(false);
+    onStatus('Escaneo BLE detenido');
   }
 
   const badgeClass =
@@ -152,16 +186,31 @@ export function BleProximity({ onStatus }: BleProximityProps) {
         >
           Simular detección
         </button>
-        {webBt && (
+        {webBt && !scanning && (
+          <button
+            type="button"
+            className="btn-primary"
+            disabled={busy || !zones.length}
+            onClick={startScan}
+            data-testid="ble-scan-btn"
+          >
+            Escanear iBeacon real
+          </button>
+        )}
+        {scanning && (
           <button
             type="button"
             className="btn-secondary"
-            disabled={busy}
-            onClick={scanWebBluetooth}
-            data-testid="ble-scan-btn"
+            onClick={stopScan}
+            data-testid="ble-stop-btn"
           >
-            Escanear BLE
+            Detener escaneo
           </button>
+        )}
+        {lastHit && (
+          <p className="ble-last-hit" data-testid="ble-last-hit">
+            Último ad: {lastHit}
+          </p>
         )}
       </div>
     </section>

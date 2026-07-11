@@ -1,8 +1,8 @@
-# Fase E2 — BLE proximidad en interiores
+# Fase E2/E3 — BLE proximidad en interiores
 
 ## Objetivo
 
-Complementar GPS (poco fiable en interiores) con beacons BLE autorizados.
+Complementar GPS (poco fiable en interiores) con beacons BLE / **iBeacon** autorizados.
 
 ## Endpoints
 
@@ -12,69 +12,66 @@ Complementar GPS (poco fiable en interiores) con beacons BLE autorizados.
 | `GET` | `/proximity/status` | JWT | Último estado BLE |
 | `POST` | `/proximity/report` | JWT | Reportar detección |
 
-### Body `POST /proximity/report`
+## E3 — Parseo iBeacon real (Web Bluetooth)
 
-```json
-{
-  "beaconId": "cali-office-lobby",
-  "uuid": "f7826da6-4fa2-4e98-8024-bc5b71e0893e",
-  "major": 1,
-  "minor": 1,
-  "rssi": -55
-}
+### Cliente
+
+| Módulo | Rol |
+|--------|-----|
+| `frontend/src/ble/ibeacon.ts` | Parse manufacturer data Apple `0x004C` |
+| `frontend/src/ble/scanBeacons.ts` | `requestLEScan` → fallback `watchAdvertisements` |
+| `BleProximity` | Botón **Escanear iBeacon real** / Detener |
+
+### Formato iBeacon (tras company id)
+
+```
+02 15 | UUID[16] | major[2 BE] | minor[2 BE] | txPower[1]
 ```
 
-### Respuesta
+### Flujo escaneo
 
-```json
-{
-  "status": "inside",
-  "beaconId": "cali-office-lobby",
-  "beaconName": "Lobby Cali",
-  "rssi": -55,
-  "updatedAt": "..."
-}
-```
+1. Preferir `navigator.bluetooth.requestLEScan({ filters: manufacturerData 0x004C })`
+2. Si no existe: `requestDevice` + `watchAdvertisements`
+3. Parsear ads → match whitelist (uuid/major/minor) → `POST /proximity/report` (throttle 2s)
+4. Beacons fuera de whitelist: aviso, no report
 
-## Beacons seed (PoC)
+### Requisitos dispositivo
+
+- **Chrome / Edge Android** + **HTTPS** (o localhost)
+- Flags opcionales: `chrome://flags` → *Experimental Web Platform features* / *Web Bluetooth*
+- **iOS Safari:** no soporta Web Bluetooth → E5 Capacitor
+
+### UI
+
+- Simular detección (E2, E2E sin hardware)
+- **Escanear iBeacon real** / Detener escaneo
+- Último ad mostrado (`ble-last-hit`)
+
+## Beacons seed
 
 | ID | Nombre | Major/Minor | Umbral RSSI |
 |----|--------|-------------|-------------|
 | `cali-office-lobby` | Lobby Cali | 1/1 | ≥ -70 |
 | `cali-safe-room` | Sala segura | 1/2 | ≥ -65 |
 
-UUID compartido: `f7826da6-4fa2-4e98-8024-bc5b71e0893e`
-
-## Comportamiento
-
-- Solo beacons en whitelist
-- `inside` si `rssi >= rssiThreshold`
-- Redis: `ble:last:{userId}` (60s), `ble:inside:{userId}` (90s)
-- Auditoría: `BLE_PROXIMITY`
-
-## UI
-
-Panel **Proximidad BLE** en `app.html`:
-- Estado: Sin señal / En zona interior / Sin proximidad
-- **Simular detección** (slider RSSI) — para PoC/E2E sin hardware
-- **Escanear BLE** si Web Bluetooth está disponible (Chrome/Android + HTTPS)
+UUID: `f7826da6-4fa2-4e98-8024-bc5b71e0893e`
 
 ## Pruebas
 
 | Tipo | Detalle |
 |------|---------|
-| Unit | `report-proximity.use-case.spec.ts` |
-| E2E | Simular detección → `en zona interior` |
-| Pentest | report sin JWT → 401 |
+| Unit backend | `report-proximity.use-case.spec.ts` |
+| Unit frontend | `npm run test -w frontend` → `ibeacon.spec.ts` |
+| E2E | Simular detección → zona interior |
+| Manual | Beacon físico + Chrome Android + `docker:prod:https` |
 
-## Limitaciones PoC
+## Limitaciones
 
-- Web Bluetooth no soporta iOS Safari
-- Parseo iBeacon real (manufacturer data) pendiente — E3/E5
-- Capacitor nativo pendiente (Fase E5)
+- iOS Safari sin Web Bluetooth (E5)
+- Algunos desktop Chrome limitan `requestLEScan`
+- Spoofing mitigado solo por whitelist + umbral RSSI
 
 ## Siguiente
 
-- E3: parseo iBeacon real en Web Bluetooth
 - E4: fusión GPS + BLE (estado híbrido)
 - E5: Capacitor BLE para iOS

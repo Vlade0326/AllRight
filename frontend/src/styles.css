@@ -363,3 +363,10 @@ button {
 .ble-sim input[type='range'] {
   width: 100%;
 }
+
+.ble-last-hit {
+  margin: 0;
+  font-size: 10px;
+  color: #666;
+  word-break: break-all;
+}
