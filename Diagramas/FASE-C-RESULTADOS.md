@@ -23,8 +23,11 @@ Reportes:
 
 ## Auditoria forense RAM
 
-**Ejecucion:** 5000 intentos  
-Re-ejecutar: `npm run security:forensic`
+**Fecha:** 2026-07-11  
+**Ejecucion:** 500/500 logins OK (0 errores, ~7 min) contra `allright_api`  
+**Hallazgos:** solo INFO — `JWT_SECRET` / `ZKP_PEPPER` en `/proc/1/environ` (normal con Docker `env_file`). Sin password de usuario ni PEMs en health/API.
+
+Re-ejecutar (5000): `$env:FORENSIC_SESSIONS='5000'; $env:FORENSIC_BATCH='10'; npm run security:forensic`
 
 Reporte: `Diagramas/forensic-ram-audit-report.txt`
 

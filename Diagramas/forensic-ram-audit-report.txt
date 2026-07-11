@@ -1,0 +1,19 @@
+﻿=== AllRight — Auditoría Forense RAM ===
+Fecha: 2026-07-11T10:05:07-05:00
+Base URL: http://127.0.0.1:3000
+Sesiones simuladas: 500
+Tokens obtenidos: 500
+Errores login: 0
+Duración: 418.6s
+Contenedor: allright_api
+
+--- Hallazgos ---
+INFO: 'JWT_SECRET' en environ del proceso (esperado con Docker env_file; preferir secrets montados)
+INFO: 'ZKP_PEPPER' en environ del proceso (esperado con Docker env_file; preferir secrets montados)
+Sin fugas de password de usuario ni claves privadas en respuestas API / health.
+
+--- Recomendaciones ---
+- En K8s/prod: montar secretos como archivos (no solo env) cuando sea posible
+- Verificar que bcrypt hashes no se loguean
+- Confirmar rate limiting activo (429 en brute force)
+- Para 5000 sesiones: FORENSIC_SESSIONS=5000 FORENSIC_BATCH=10 npm run security:forensic

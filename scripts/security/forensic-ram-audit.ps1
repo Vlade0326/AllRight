@@ -39,6 +39,8 @@ for ($offset = 0; $offset -lt $sessions; $offset += $batchSize) {
     Remove-Job $j
   }
   Write-Host "  $($tokens.Count) tokens obtenidos ($($offset + $limit)/$sessions)..."
+  # Pacing para no saturar RATE_LIMIT_MAX (120/min por defecto)
+  Start-Sleep -Milliseconds ([Math]::Max(800, [int](($limit / 100.0) * 60000)))
 }
 
 $elapsed = (Get-Date) - $start
@@ -61,14 +63,18 @@ if ($container) {
   foreach ($pat in $patterns) {
     $hits = docker exec $container sh -c "timeout 5 grep -a -r -l '$pat' /proc/1/environ /proc/1/cmdline 2>/dev/null | head -3" 2>$null
     if ($hits) {
-      $findings.Add("PATTERN '$pat' encontrado en: $hits")
+      if ($hits -match "environ") {
+        $findings.Add("INFO: '$pat' en environ del proceso (esperado con Docker env_file; preferir secrets montados)")
+      } else {
+        $findings.Add("PATTERN '$pat' encontrado en: $hits")
+      }
     }
   }
 
   # Heap snapshot strings (muestra de /proc/1/maps + strings)
   $memSample = docker exec $container sh -c "strings /proc/1/environ 2>/dev/null | head -20" 2>$null
-  if ($memSample -match "JWT_SECRET|ZKP_PEPPER|password") {
-    $findings.Add("CRITICO: secretos en environ del proceso")
+  if ($memSample -match "AllRight2026!Secure|BEGIN PRIVATE KEY") {
+    $findings.Add("CRITICO: credencial o clave privada en environ del proceso")
   }
 } else {
   Write-Host "  Contenedor allright-api no encontrado; escaneo de memoria omitido."

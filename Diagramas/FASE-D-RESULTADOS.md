@@ -59,8 +59,10 @@ Workflow `.github/workflows/cd.yml`:
 - [x] BLE iBeacon real Web Bluetooth (Fase E3)
 - [x] Fusión GPS+BLE (Fase E4) — ver `Diagramas/FASE-E-HYBRID.md`
 - [x] Capacitor BLE iOS/Android (Fase E5) — ver `Diagramas/FASE-E-CAPACITOR.md`
+- [x] Guía SMTP — ver `Diagramas/SMTP-SETUP.md`
+- [x] Forense RAM 500/500 (2026-07-11) — ver `Diagramas/FASE-C-RESULTADOS.md`
 - [ ] Burp Suite análisis profundo (guía en `scripts/security/BURP-SUITE.md`)
 - [ ] Probar GPS real en móvil vía `https://<IP>:3443`
-- [ ] Configurar SMTP real en `.env.production`
+- [ ] Configurar SMTP real en `.env.production` (credenciales del proveedor)
 - [ ] Re-ejecutar forense 5000/5000 tras rebuild prod
 - [ ] Build nativo iOS en Mac (`npm run cap:ios`) / Android Studio

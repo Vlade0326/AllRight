@@ -75,11 +75,15 @@ PANIC_RATE_MAX=3
 PANIC_RATE_WINDOW_SEC=3600
 
 # SMTP (opcional — sin SMTP_HOST se usa log en consola)
+# Guía completa: Diagramas/SMTP-SETUP.md
 # SMTP_HOST=smtp.example.com
 # SMTP_PORT=587
+# SMTP_SECURE=false
 # SMTP_USER=
 # SMTP_PASS=
-# SMTP_FROM=noreply@allright.app
+# SMTP_FROM=AllRight <noreply@allright.app>
+# PANIC_NOTIFY_EMAIL=ops@example.com
+# APP_URL=https://tudominio:3443
 "@
 
 Set-Content -Path $outFile -Value $content -Encoding UTF8

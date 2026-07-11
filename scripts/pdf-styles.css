@@ -1,0 +1,99 @@
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 11pt;
+  line-height: 1.5;
+  color: #1a1a1a;
+  max-width: 100%;
+}
+
+h1 {
+  font-size: 22pt;
+  color: #1d3557;
+  border-bottom: 2px solid #2d6a4f;
+  padding-bottom: 8px;
+  page-break-after: avoid;
+}
+
+h2 {
+  font-size: 16pt;
+  color: #2d6a4f;
+  margin-top: 1.5em;
+  page-break-after: avoid;
+}
+
+h3 {
+  font-size: 13pt;
+  color: #457b9d;
+  page-break-after: avoid;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+  font-size: 10pt;
+  page-break-inside: avoid;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  text-align: left;
+}
+
+th {
+  background: #e8f5e9;
+  font-weight: 600;
+}
+
+code {
+  background: #f4f4f4;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 9.5pt;
+}
+
+pre {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 12px;
+  font-size: 9pt;
+  overflow-x: auto;
+  page-break-inside: avoid;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 2em 0;
+}
+
+blockquote {
+  border-left: 4px solid #2d6a4f;
+  margin: 1em 0;
+  padding-left: 1em;
+  color: #555;
+}
+
+ul, ol {
+  margin: 0.5em 0;
+}
+
+li {
+  margin: 0.25em 0;
+}
+
+@media print {
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+  table, pre {
+    page-break-inside: avoid;
+  }
+}
