@@ -73,5 +73,5 @@ UUID: `f7826da6-4fa2-4e98-8024-bc5b71e0893e`
 
 ## Siguiente
 
-- E4: fusión GPS + BLE (estado híbrido)
-- E5: Capacitor BLE para iOS
+- E4: fusión GPS + BLE — ver `Diagramas/FASE-E-HYBRID.md` ✅
+- E5: Capacitor BLE — ver `Diagramas/FASE-E-CAPACITOR.md` ✅

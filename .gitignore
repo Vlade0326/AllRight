@@ -21,3 +21,7 @@ infra/terraform/**/*.tfstate.*
 infra/terraform/**/.terraform.lock.hcl
 k8s/terraform-aws/
 k8s/terraform-gcp/
+frontend/dist/
+frontend/ios/
+frontend/android/
+frontend/.capacitor/

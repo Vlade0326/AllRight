@@ -57,8 +57,10 @@ Workflow `.github/workflows/cd.yml`:
 - [x] Botón de pánico (Fase E1) — ver `Diagramas/FASE-E-PANIC.md`
 - [x] BLE proximidad interiores PoC (Fase E2) — ver `Diagramas/FASE-E-BLE.md`
 - [x] BLE iBeacon real Web Bluetooth (Fase E3)
+- [x] Fusión GPS+BLE (Fase E4) — ver `Diagramas/FASE-E-HYBRID.md`
+- [x] Capacitor BLE iOS/Android (Fase E5) — ver `Diagramas/FASE-E-CAPACITOR.md`
 - [ ] Burp Suite análisis profundo (guía en `scripts/security/BURP-SUITE.md`)
 - [ ] Probar GPS real en móvil vía `https://<IP>:3443`
 - [ ] Configurar SMTP real en `.env.production`
 - [ ] Re-ejecutar forense 5000/5000 tras rebuild prod
-- [ ] Fusión GPS+BLE (E4) / Capacitor iOS (E5)
+- [ ] Build nativo iOS en Mac (`npm run cap:ios`) / Android Studio

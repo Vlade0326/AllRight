@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { apiFetch } from '../api/client';
-import { DetectedBeacon, getBluetooth, startIBeaconScan } from '../ble/scanBeacons';
+import { DetectedBeacon, canScanBle, startIBeaconScan } from '../ble/scanBeacons';
 
 export interface BeaconZone {
   id: string;
@@ -31,11 +31,12 @@ export function BleProximity({ onStatus }: BleProximityProps) {
   const [busy, setBusy] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [lastHit, setLastHit] = useState<string>('');
+  const [canScan, setCanScan] = useState(false);
   const scanRef = useRef<{ stop: () => void } | null>(null);
   const lastReportRef = useRef<{ key: string; at: number }>({ key: '', at: 0 });
-  const webBt = !!getBluetooth();
 
   useEffect(() => {
+    void canScanBle().then(setCanScan);
     (async () => {
       try {
         const list = await apiFetch<BeaconZone[]>('/proximity/zones');
@@ -107,13 +108,16 @@ export function BleProximity({ onStatus }: BleProximityProps) {
   }
 
   async function startScan() {
-    if (!webBt) {
-      onStatus('Web Bluetooth no disponible — usa simulador o Chrome/Android + HTTPS', true);
+    if (!canScan) {
+      onStatus(
+        'BLE no disponible — usa app Capacitor (iOS/Android), Chrome+HTTPS, o el simulador',
+        true,
+      );
       return;
     }
     try {
       setScanning(true);
-      onStatus('Escaneando iBeacon (Apple 0x004C)…');
+      onStatus('Escaneando iBeacon…');
       const handle = await startIBeaconScan(zones, (hit) => {
         void onBeaconDetected(hit);
       });
@@ -186,7 +190,7 @@ export function BleProximity({ onStatus }: BleProximityProps) {
         >
           Simular detección
         </button>
-        {webBt && !scanning && (
+        {canScan && !scanning && (
           <button
             type="button"
             className="btn-primary"

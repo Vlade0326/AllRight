@@ -38,6 +38,9 @@
     "security:pentest": "powershell -ExecutionPolicy Bypass -File scripts/security/api-pentest.ps1",
     "security:pentest:html": "powershell -ExecutionPolicy Bypass -File scripts/security/generate-pentest-html.ps1",
     "security:burp": "echo Ver scripts/security/BURP-SUITE.md",
-    "docs:pdf": "node scripts/generate-docs-pdf.js"
+    "docs:pdf": "node scripts/generate-docs-pdf.js",
+    "cap:sync": "npm run cap:sync -w frontend",
+    "cap:android": "npm run cap:android -w frontend",
+    "cap:ios": "npm run cap:ios -w frontend"
   }
 }

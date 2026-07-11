@@ -3,6 +3,7 @@ import { ProofHistory } from '../components/ProofHistory';
 import { MapView } from '../components/MapView';
 import { PanicButton } from '../components/PanicButton';
 import { BleProximity } from '../components/BleProximity';
+import { HybridStatusBadge } from '../components/HybridStatusBadge';
 import { useLocationApp } from '../hooks/useLocationApp';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 
@@ -12,6 +13,7 @@ export function AppPage() {
   const [panicStatus, setPanicStatus] = useState<{ msg: string; error: boolean } | null>(
     null,
   );
+  const [hybridKey, setHybridKey] = useState(0);
 
   const statusMsg = panicStatus?.msg ?? app.status;
   const statusError = panicStatus?.error ?? app.statusError;
@@ -71,6 +73,12 @@ export function AppPage() {
           </span>
         </div>
 
+        <HybridStatusBadge
+          coords={app.coords}
+          zoneInside={app.zoneInside}
+          refreshKey={hybridKey}
+        />
+
         <div className="action-panel">
           <button className="btn-primary" onClick={app.generateProof} data-testid="prove-btn">
             Generar proof ZKP
@@ -88,7 +96,10 @@ export function AppPage() {
         </div>
 
         <BleProximity
-          onStatus={(msg, isError = false) => setPanicStatus({ msg, error: isError })}
+          onStatus={(msg, isError = false) => {
+            setPanicStatus({ msg, error: isError });
+            setHybridKey((k) => k + 1);
+          }}
         />
 
         <ProofHistory items={app.history} onRefresh={app.loadHistory} />

@@ -70,5 +70,8 @@ test.describe('Post-login App — mobile', () => {
       timeout: 10000,
     });
     await expect(page.getByTestId('app-status')).toContainText(/BLE: en zona/i);
+    await expect(page.getByTestId('hybrid-status')).toContainText(/interior|Seguro/i, {
+      timeout: 10000,
+    });
   });
 });

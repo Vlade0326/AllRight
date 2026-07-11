@@ -6,16 +6,27 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:cap": "vite build --outDir dist --emptyOutDir",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "cap:sync": "npm run build:cap && npx cap sync",
+    "cap:ios": "npm run cap:sync && npx cap open ios",
+    "cap:android": "npm run cap:sync && npx cap open android",
+    "cap:add:ios": "npx cap add ios",
+    "cap:add:android": "npx cap add android"
   },
   "dependencies": {
+    "@capacitor-community/bluetooth-le": "^6.1.0",
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/core": "^6.2.0",
+    "@capacitor/ios": "^6.2.0",
     "leaflet": "^1.9.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-leaflet": "^4.2.1"
   },
   "devDependencies": {
+    "@capacitor/cli": "^6.2.0",
     "@types/leaflet": "^1.9.12",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",

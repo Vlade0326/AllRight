@@ -18,6 +18,8 @@ import { GetActivePanicUseCase } from './use-cases/security/get-active-panic.use
 import { ReportProximityUseCase } from './use-cases/proximity/report-proximity.use-case';
 import { GetProximityZonesUseCase } from './use-cases/proximity/get-proximity-zones.use-case';
 import { GetProximityStatusUseCase } from './use-cases/proximity/get-proximity-status.use-case';
+import { ReportGpsPresenceUseCase } from './use-cases/proximity/report-gps-presence.use-case';
+import { GetHybridStatusUseCase } from './use-cases/proximity/get-hybrid-status.use-case';
 
 @Module({
   imports: [
@@ -50,6 +52,8 @@ import { GetProximityStatusUseCase } from './use-cases/proximity/get-proximity-s
     ReportProximityUseCase,
     GetProximityZonesUseCase,
     GetProximityStatusUseCase,
+    ReportGpsPresenceUseCase,
+    GetHybridStatusUseCase,
   ],
   exports: [
     JwtModule,
@@ -69,6 +73,8 @@ import { GetProximityStatusUseCase } from './use-cases/proximity/get-proximity-s
     ReportProximityUseCase,
     GetProximityZonesUseCase,
     GetProximityStatusUseCase,
+    ReportGpsPresenceUseCase,
+    GetHybridStatusUseCase,
   ],
 })
 export class ApplicationModule {}
