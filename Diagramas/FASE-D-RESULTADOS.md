@@ -54,7 +54,9 @@ Workflow `.github/workflows/cd.yml`:
 
 ## Pendiente manual
 
+- [x] Botón de pánico (Fase E1) — ver `Diagramas/FASE-E-PANIC.md`
 - [ ] Burp Suite análisis profundo (guía en `scripts/security/BURP-SUITE.md`)
 - [ ] Probar GPS real en móvil vía `https://<IP>:3443`
 - [ ] Configurar SMTP real en `.env.production`
 - [ ] Re-ejecutar forense 5000/5000 tras rebuild prod
+- [ ] BLE proximidad interiores (Fase E2)

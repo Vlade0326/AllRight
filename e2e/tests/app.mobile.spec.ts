@@ -48,4 +48,18 @@ test.describe('Post-login App — mobile', () => {
       timeout: 10000,
     });
   });
+
+  test('panic button triggers and resolves SOS alert', async ({ page }) => {
+    await expect(page.getByTestId('panic-btn')).toBeVisible();
+    await page.getByTestId('panic-btn').click();
+    await expect(page.getByTestId('panic-modal')).toBeVisible();
+    await page.getByTestId('panic-confirm-btn').click();
+    await expect(page.getByTestId('panic-active')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('app-status')).toContainText(/alerta enviada/i, {
+      timeout: 5000,
+    });
+    await page.getByTestId('panic-resolve-btn').click();
+    await expect(page.getByTestId('panic-btn')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('app-status')).toContainText(/cancelada/i);
+  });
 });

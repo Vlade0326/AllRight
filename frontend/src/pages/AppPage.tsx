@@ -1,11 +1,19 @@
+import { useState } from 'react';
 import { ProofHistory } from '../components/ProofHistory';
 import { MapView } from '../components/MapView';
+import { PanicButton } from '../components/PanicButton';
 import { useLocationApp } from '../hooks/useLocationApp';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 
 export function AppPage() {
   const app = useLocationApp();
   usePushNotifications();
+  const [panicStatus, setPanicStatus] = useState<{ msg: string; error: boolean } | null>(
+    null,
+  );
+
+  const statusMsg = panicStatus?.msg ?? app.status;
+  const statusError = panicStatus?.error ?? app.statusError;
 
   if (app.loading) {
     return (
@@ -72,6 +80,10 @@ export function AppPage() {
           <button className="btn-secondary" onClick={app.checkGeofence} data-testid="geofence-btn">
             Check geofence
           </button>
+          <PanicButton
+            coords={app.coords}
+            onStatus={(msg, isError = false) => setPanicStatus({ msg, error: isError })}
+          />
         </div>
 
         <ProofHistory items={app.history} onRefresh={app.loadHistory} />
@@ -79,9 +91,9 @@ export function AppPage() {
         <p
           className="status app-status"
           data-testid="app-status"
-          style={{ color: app.statusError ? '#c0392b' : '#2d6a4f' }}
+          style={{ color: statusError ? '#c0392b' : '#2d6a4f' }}
         >
-          {app.status}
+          {statusMsg}
         </p>
       </div>
     </div>

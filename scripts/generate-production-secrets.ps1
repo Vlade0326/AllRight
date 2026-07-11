@@ -69,6 +69,11 @@ VAPID_PUBLIC_KEY=$vapidPublic
 VAPID_PRIVATE_KEY=$vapidPrivate
 VAPID_SUBJECT=mailto:admin@allright.app
 
+# Panic SOS
+# PANIC_NOTIFY_EMAIL=ops@example.com
+PANIC_RATE_MAX=3
+PANIC_RATE_WINDOW_SEC=3600
+
 # SMTP (opcional — sin SMTP_HOST se usa log en consola)
 # SMTP_HOST=smtp.example.com
 # SMTP_PORT=587

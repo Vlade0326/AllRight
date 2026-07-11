@@ -12,6 +12,9 @@ import { GetProofHistoryUseCase } from './use-cases/location/get-proof-history.u
 import { ChangePasswordUseCase } from './use-cases/auth/change-password.use-case';
 import { ForgotPasswordUseCase } from './use-cases/auth/forgot-password.use-case';
 import { ResetPasswordUseCase } from './use-cases/auth/reset-password.use-case';
+import { TriggerPanicUseCase } from './use-cases/security/trigger-panic.use-case';
+import { ResolvePanicUseCase } from './use-cases/security/resolve-panic.use-case';
+import { GetActivePanicUseCase } from './use-cases/security/get-active-panic.use-case';
 
 @Module({
   imports: [
@@ -38,6 +41,9 @@ import { ResetPasswordUseCase } from './use-cases/auth/reset-password.use-case';
     GetProofHistoryUseCase,
     ForgotPasswordUseCase,
     ResetPasswordUseCase,
+    TriggerPanicUseCase,
+    ResolvePanicUseCase,
+    GetActivePanicUseCase,
   ],
   exports: [
     JwtModule,
@@ -51,6 +57,9 @@ import { ResetPasswordUseCase } from './use-cases/auth/reset-password.use-case';
     GetProofHistoryUseCase,
     ForgotPasswordUseCase,
     ResetPasswordUseCase,
+    TriggerPanicUseCase,
+    ResolvePanicUseCase,
+    GetActivePanicUseCase,
   ],
 })
 export class ApplicationModule {}
