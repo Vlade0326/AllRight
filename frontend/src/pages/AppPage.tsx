@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ProofHistory } from '../components/ProofHistory';
 import { MapView } from '../components/MapView';
 import { PanicButton } from '../components/PanicButton';
+import { BleProximity } from '../components/BleProximity';
 import { useLocationApp } from '../hooks/useLocationApp';
 import { usePushNotifications } from '../hooks/usePushNotifications';
 
@@ -85,6 +86,10 @@ export function AppPage() {
             onStatus={(msg, isError = false) => setPanicStatus({ msg, error: isError })}
           />
         </div>
+
+        <BleProximity
+          onStatus={(msg, isError = false) => setPanicStatus({ msg, error: isError })}
+        />
 
         <ProofHistory items={app.history} onRefresh={app.loadHistory} />
 

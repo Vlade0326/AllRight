@@ -13,6 +13,7 @@ import { LocationController } from './presentation/controllers/location.controll
 import { HealthController } from './presentation/controllers/health.controller';
 import { MetricsController } from './presentation/controllers/metrics.controller';
 import { NotificationsController } from './presentation/controllers/notifications.controller';
+import { ProximityController } from './presentation/controllers/proximity.controller';
 import { GlobalExceptionFilter } from './presentation/filters/http-exception.filter';
 import { HttpMetricsInterceptor } from './presentation/interceptors/http-metrics.interceptor';
 import { RateLimitGuard } from './presentation/guards/rate-limit.guard';
@@ -42,6 +43,7 @@ import { RateLimitGuard } from './presentation/guards/rate-limit.guard';
     HealthController,
     MetricsController,
     NotificationsController,
+    ProximityController,
   ],
   providers: [
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },

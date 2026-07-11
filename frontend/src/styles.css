@@ -323,3 +323,43 @@ button {
   flex-direction: column;
   gap: 8px;
 }
+
+.ble-panel {
+  width: 100%;
+  margin-top: 8px;
+  border-top: 1px solid #eee;
+  padding-top: 8px;
+}
+
+.ble-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.ble-header h2 {
+  font-size: 13px;
+  margin: 0;
+  font-weight: 600;
+  color: #333;
+}
+
+.ble-sim {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ble-sim label {
+  font-size: 11px;
+  color: #555;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ble-sim select,
+.ble-sim input[type='range'] {
+  width: 100%;
+}

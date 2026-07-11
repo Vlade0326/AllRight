@@ -62,4 +62,13 @@ test.describe('Post-login App — mobile', () => {
     await expect(page.getByTestId('panic-btn')).toBeVisible({ timeout: 10000 });
     await expect(page.getByTestId('app-status')).toContainText(/cancelada/i);
   });
+
+  test('BLE proximity simulator reports inside zone', async ({ page }) => {
+    await expect(page.getByTestId('ble-proximity')).toBeVisible();
+    await page.getByTestId('ble-simulate-btn').click();
+    await expect(page.getByTestId('ble-status')).toContainText(/zona interior/i, {
+      timeout: 10000,
+    });
+    await expect(page.getByTestId('app-status')).toContainText(/BLE: en zona/i);
+  });
 });

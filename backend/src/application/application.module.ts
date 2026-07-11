@@ -15,6 +15,9 @@ import { ResetPasswordUseCase } from './use-cases/auth/reset-password.use-case';
 import { TriggerPanicUseCase } from './use-cases/security/trigger-panic.use-case';
 import { ResolvePanicUseCase } from './use-cases/security/resolve-panic.use-case';
 import { GetActivePanicUseCase } from './use-cases/security/get-active-panic.use-case';
+import { ReportProximityUseCase } from './use-cases/proximity/report-proximity.use-case';
+import { GetProximityZonesUseCase } from './use-cases/proximity/get-proximity-zones.use-case';
+import { GetProximityStatusUseCase } from './use-cases/proximity/get-proximity-status.use-case';
 
 @Module({
   imports: [
@@ -44,6 +47,9 @@ import { GetActivePanicUseCase } from './use-cases/security/get-active-panic.use
     TriggerPanicUseCase,
     ResolvePanicUseCase,
     GetActivePanicUseCase,
+    ReportProximityUseCase,
+    GetProximityZonesUseCase,
+    GetProximityStatusUseCase,
   ],
   exports: [
     JwtModule,
@@ -60,6 +66,9 @@ import { GetActivePanicUseCase } from './use-cases/security/get-active-panic.use
     TriggerPanicUseCase,
     ResolvePanicUseCase,
     GetActivePanicUseCase,
+    ReportProximityUseCase,
+    GetProximityZonesUseCase,
+    GetProximityStatusUseCase,
   ],
 })
 export class ApplicationModule {}
