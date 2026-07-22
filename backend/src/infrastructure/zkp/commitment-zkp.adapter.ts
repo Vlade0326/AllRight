@@ -58,26 +58,34 @@ export class CommitmentZkpAdapter implements ILocationProofPort {
   }
 
   async verifyProof(proof: LocationProof): Promise<VerificationResult> {
-    const expectedProof = crypto
-      .createHmac('sha256', this.pepper)
-      .update(JSON.stringify(proof.payload))
-      .digest('hex');
+    const zoneId = proof.payload?.publicSignals?.zoneId ?? 'unknown';
+    const proofHex = String(proof.proof ?? '');
 
-    const proofHex = String(proof.proof);
-    const validProof =
-      proofHex.length === expectedProof.length &&
-      crypto.timingSafeEqual(
-        Buffer.from(proofHex, 'hex'),
-        Buffer.from(expectedProof, 'hex'),
-      );
+    try {
+      const expectedProof = crypto
+        .createHmac('sha256', this.pepper)
+        .update(JSON.stringify(proof.payload ?? {}))
+        .digest('hex');
 
-    const valid = validProof && proof.payload.publicSignals.zoneId === this.zone.id;
+      const validProof =
+        /^[0-9a-f]+$/i.test(proofHex) &&
+        proofHex.length === expectedProof.length &&
+        crypto.timingSafeEqual(
+          Buffer.from(proofHex, 'hex'),
+          Buffer.from(expectedProof, 'hex'),
+        );
 
-    return {
-      valid,
-      isInside: valid ? proof.payload.publicSignals.isInside : false,
-      zoneId: proof.payload.publicSignals.zoneId,
-    };
+      const valid =
+        validProof && proof.payload?.publicSignals?.zoneId === this.zone.id;
+
+      return {
+        valid,
+        isInside: valid ? Boolean(proof.payload.publicSignals.isInside) : false,
+        zoneId,
+      };
+    } catch {
+      return { valid: false, isInside: false, zoneId };
+    }
   }
 
   private buildCommitment(

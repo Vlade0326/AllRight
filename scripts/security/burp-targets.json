@@ -2,7 +2,17 @@
   "project": "AllRight API",
   "baseUrl": "http://127.0.0.1:3000",
   "scope": {
-    "include": ["/auth/*", "/users", "/location/*", "/security/*", "/health", "/metrics"]
+    "include": [
+      "/auth/*",
+      "/users",
+      "/location/*",
+      "/security/*",
+      "/proximity/*",
+      "/notifications/*",
+      "/health",
+      "/health/ready",
+      "/metrics"
+    ]
   },
   "endpoints": [
     {
@@ -49,6 +59,56 @@
       "auth": "Bearer",
       "body": { "proof": {}, "payload": {} },
       "tests": ["zkp_tampering", "invalid_proof"]
+    },
+    {
+      "method": "GET",
+      "path": "/location/history",
+      "auth": "Bearer",
+      "tests": ["auth_bypass"]
+    },
+    {
+      "method": "POST",
+      "path": "/security/panic",
+      "auth": "Bearer",
+      "body": {},
+      "tests": ["auth_bypass", "rate_limit"]
+    },
+    {
+      "method": "GET",
+      "path": "/security/panic/active",
+      "auth": "Bearer",
+      "tests": ["auth_bypass", "jwt_none", "jwt_tamper"]
+    },
+    {
+      "method": "GET",
+      "path": "/proximity/zones",
+      "auth": "Bearer",
+      "tests": ["auth_bypass"]
+    },
+    {
+      "method": "POST",
+      "path": "/proximity/report",
+      "auth": "Bearer",
+      "body": { "uuid": "f7826da6-4fa2-4e98-8024-bc5b71e0893e", "rssi": -55 },
+      "tests": ["spoof_beacon", "auth_bypass"]
+    },
+    {
+      "method": "POST",
+      "path": "/proximity/gps",
+      "auth": "Bearer",
+      "body": { "lat": 3.4516, "lon": -76.5320 },
+      "tests": ["spoof_location"]
+    },
+    {
+      "method": "GET",
+      "path": "/proximity/hybrid",
+      "auth": "Bearer",
+      "tests": ["auth_bypass"]
+    },
+    {
+      "method": "GET",
+      "path": "/notifications/vapid-public-key",
+      "tests": ["info_disclosure"]
     },
     {
       "method": "GET",

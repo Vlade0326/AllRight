@@ -56,7 +56,7 @@ export class SnarkjsZkpAdapter implements ILocationProofPort {
       adapter: 'snarkjs',
       publicSignals: {
         zoneId: input.zoneId,
-        isInside: publicSignals[4] === '1',
+        isInside: publicSignals[0] === '1',
         bounds,
         signals: publicSignals,
       },
@@ -66,64 +66,86 @@ export class SnarkjsZkpAdapter implements ILocationProofPort {
   }
 
   async verifyProof(proof: LocationProof): Promise<VerificationResult> {
-    if (proof.payload.adapter !== 'snarkjs') {
+    const zoneId = proof.payload?.publicSignals?.zoneId ?? 'unknown';
+
+    if (proof.payload?.adapter !== 'snarkjs') {
       return {
         valid: false,
         isInside: false,
-        zoneId: proof.payload.publicSignals.zoneId,
+        zoneId,
       };
     }
 
-    const groth16Proof =
-      typeof proof.proof === 'string' ? JSON.parse(proof.proof) : proof.proof;
+    if (
+      !proof.proof ||
+      (!proof.payload.publicSignals?.signals &&
+        !proof.payload.publicSignals?.bounds)
+    ) {
+      return { valid: false, isInside: false, zoneId };
+    }
 
-    const signals =
-      proof.payload.publicSignals.signals ??
-      this.buildExpectedPublicSignals(proof.payload.publicSignals.bounds!);
+    try {
+      const groth16Proof =
+        typeof proof.proof === 'string' ? JSON.parse(proof.proof) : proof.proof;
 
-    const valid = await snarkjs.groth16.verify(this.vKey, signals, groth16Proof);
+      const signals =
+        proof.payload.publicSignals.signals ??
+        this.buildExpectedPublicSignals(proof.payload.publicSignals.bounds!);
 
-    return {
-      valid,
-      isInside: valid && signals[4] === '1',
-      zoneId: proof.payload.publicSignals.zoneId,
-    };
+      const valid = await snarkjs.groth16.verify(
+        this.vKey,
+        signals,
+        groth16Proof,
+      );
+
+      return {
+        valid,
+        isInside: valid && signals[0] === '1',
+        zoneId,
+      };
+    } catch {
+      return { valid: false, isInside: false, zoneId };
+    }
   }
 
   private scaleCoordinates(coords: Coordinates) {
-    const scale = 1_000_000;
-    return {
-      lat: Math.round(coords.latitude * scale),
-      lon: Math.round(coords.longitude * scale),
-    };
-  }
+  const scale = 1_000_000;
+  const LAT_OFFSET = 90_000_000;   // desplaza latitud a rango no-negativo
+  const LON_OFFSET = 180_000_000;  // desplaza longitud a rango no-negativo
+  return {
+    lat: Math.round(coords.latitude * scale) + LAT_OFFSET,
+    lon: Math.round(coords.longitude * scale) + LON_OFFSET,
+  };
+}
 
   private getBounds() {
-    const scale = 1_000_000;
-    const centerLat = Math.round(this.zone.center.latitude * scale);
-    const centerLon = Math.round(this.zone.center.longitude * scale);
-    const delta = Math.round((this.zone.radiusKm / 111.32) * scale);
+  const scale = 1_000_000;
+  const LAT_OFFSET = 90_000_000;
+  const LON_OFFSET = 180_000_000;
+  const centerLat = Math.round(this.zone.center.latitude * scale) + LAT_OFFSET;
+  const centerLon = Math.round(this.zone.center.longitude * scale) + LON_OFFSET;
+  const delta = Math.round((this.zone.radiusKm / 111.32) * scale);
 
-    return {
-      minLat: centerLat - delta,
-      maxLat: centerLat + delta,
-      minLon: centerLon - delta,
-      maxLon: centerLon + delta,
-    };
-  }
+  return {
+    minLat: centerLat - delta,
+    maxLat: centerLat + delta,
+    minLon: centerLon - delta,
+    maxLon: centerLon + delta,
+  };
+}
 
   private buildExpectedPublicSignals(bounds: {
-    minLat: number;
-    maxLat: number;
-    minLon: number;
-    maxLon: number;
-  }) {
-    return [
-      String(bounds.minLat),
-      String(bounds.maxLat),
-      String(bounds.minLon),
-      String(bounds.maxLon),
-      '1',
-    ];
-  }
+  minLat: number;
+  maxLat: number;
+  minLon: number;
+  maxLon: number;
+}) {
+  return [
+    '1',
+    String(bounds.minLat),
+    String(bounds.maxLat),
+    String(bounds.minLon),
+    String(bounds.maxLon),
+  ];
+}
 }

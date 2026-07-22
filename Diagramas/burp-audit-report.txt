@@ -1,0 +1,28 @@
+﻿=== AllRight â€” Burp-equivalent audit ===
+Fecha: 2026-07-21T20:11:21.0408002-05:00
+Base URL: http://127.0.0.1:3000
+PASS: 14  FAIL: 0  INFO: 3
+
+[INFO] Auth | Login demo OK | Demo fallÃ³ (Error en el servidor remoto: (401) No autorizado.); creando usuario efimero
+[PASS] Auth | Login efimero OK | burp_653a99494c@test.com
+[PASS] JWT | Algoritmo none rechazado | HTTP 401
+[PASS] JWT | Firma alterada rechazada | HTTP 401
+[PASS] AuthZ | GET /proximity/zones sin JWT | HTTP 401
+[PASS] AuthZ | POST /security/panic sin JWT | HTTP 401
+[PASS] AuthZ | GET /location/history sin JWT | HTTP 401
+[PASS] Intruder | SQLi login no causa 500 | payloads Intruder
+[PASS] XSS | POST /users con role XSS | HTTP 201 (revisar mass assignment)
+[PASS] Auth | forgot-password sin enumeracion | Si el correo está registrado, recibirás instrucciones para restablecer la contraseña.
+[PASS] Auth | reset token invalido | HTTP 401
+[PASS] ZKP | verify proof vacio rechazado | HTTP 400
+[PASS] Proximity | report beacon desconocido | HTTP 400
+[PASS] Geofence | check fuera de zona (0,0) | HTTP 201
+[PASS] Intruder | Rate limit login 429 | 15 intentos fallidos
+[INFO] Passive | Headers seguridad /health | sin CSP; sin X-Content-Type-Options; sin HSTS (esperado en HTTP)
+[INFO] Disclosure | GET /metrics | publico (dev OK; prod debe usar METRICS_TOKEN)
+
+
+--- Nota ---
+Burp Suite Community no detectado en este host.
+Esta corrida cubre Intruder/Repeater del flujo en BURP-SUITE.md.
+Para escaneo GUI: instalar Burp, proxy :8080, importar burp-targets.json.

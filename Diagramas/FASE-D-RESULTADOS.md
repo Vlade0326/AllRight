@@ -61,7 +61,7 @@ Workflow `.github/workflows/cd.yml`:
 - [x] Capacitor BLE iOS/Android (Fase E5) — ver `Diagramas/FASE-E-CAPACITOR.md`
 - [x] Guía SMTP — ver `Diagramas/SMTP-SETUP.md`
 - [x] Forense RAM 500/500 (2026-07-11) — ver `Diagramas/FASE-C-RESULTADOS.md`
-- [ ] Burp Suite análisis profundo (guía en `scripts/security/BURP-SUITE.md`)
+- [x] Burp Suite Intruder/Repeater (2026-07-14) — `npm run security:burp` / `Diagramas/burp-report.html`
 - [ ] Probar GPS real en móvil vía `https://<IP>:3443`
 - [ ] Configurar SMTP real en `.env.production` (credenciales del proveedor)
 - [ ] Re-ejecutar forense 5000/5000 tras rebuild prod

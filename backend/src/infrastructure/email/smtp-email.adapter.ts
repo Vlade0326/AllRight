@@ -17,7 +17,7 @@ export class SmtpEmailAdapter implements IEmailPort {
       : undefined;
 
     this.transporter = nodemailer.createTransport({
-      host: this.config.getOrThrow<string>('SMTP_HOST'),
+      host: this.config.get<string>('SMTP_HOST', ''),
       port: this.config.get<number>('SMTP_PORT', 587),
       secure: this.config.get('SMTP_SECURE', 'false') === 'true',
       auth,

@@ -31,6 +31,31 @@ Re-ejecutar (5000): `$env:FORENSIC_SESSIONS='5000'; $env:FORENSIC_BATCH='10'; np
 
 Reporte: `Diagramas/forensic-ram-audit-report.txt`
 
+## Burp Suite / auditoría Intruder-Repeater
+
+**Fecha:** 2026-07-20  
+**Método:** `npm run security:burp` (Burp Community no instalado; script Intruder/Repeater equivalente)  
+**Target:** `http://127.0.0.1:3000`
+
+| Área | Resultado |
+|------|-----------|
+| JWT `none` / firma alterada | PASS (401) |
+| AuthZ panic / proximity / history | PASS (401) |
+| SQLi login | PASS (sin 500) |
+| Rate limit login | PASS (429) |
+| forgot-password sin enumeración | PASS |
+| Proof ZKP vacío | PASS (400, sin 500) |
+| Headers CSP/HSTS | INFO (mejorables en HTTP) |
+| `/metrics` | INFO según entorno |
+
+Fixes aplicados durante la auditoría:
+- SMTP: no instanciar adapter si falta `SMTP_HOST`
+- `POST /location/verify`: 400 si falta proof/payload
+- ZKP adapters: no lanzar 500 con payload malformado
+
+Reportes: `Diagramas/burp-audit-report.txt`, `Diagramas/burp-report.html`  
+Guía GUI: `scripts/security/BURP-SUITE.md`
+
 ## Endpoints Fase C
 
 | Endpoint | Descripcion |

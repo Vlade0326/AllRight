@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, UseGuards, Req, Inject } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseGuards, Req, Inject, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { getZkpArtifactPaths, zkpArtifactsAvailable } from '../../infrastructure/zkp/zkp-artifacts.util';
 import { GenerateLocationProofUseCase } from '../../application/use-cases/location/generate-location-proof.use-case';
@@ -79,6 +79,11 @@ export class LocationController {
     @Body() body: { proof: string; payload: LocationProof['payload'] },
     @Req() req: { user: { sub: string } },
   ) {
+    if (!body?.proof || !body?.payload?.publicSignals?.zoneId) {
+      throw new BadRequestException(
+        'proof y payload.publicSignals.zoneId son requeridos',
+      );
+    }
     const locationProof = new LocationProof(body.proof, body.payload);
     return this.verifyProof.execute(req.user.sub, locationProof);
   }

@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"/><title>AllRight Burp Audit</title>
+<style>
+body{font-family:Segoe UI,system-ui,sans-serif;margin:2rem;background:#0f1419;color:#e7ecf3}
+h1{color:#7dd3fc} table{border-collapse:collapse;width:100%} th,td{border:1px solid #334;padding:.5rem;text-align:left}
+th{background:#1a2332} .pass{background:#0f2a1a} .fail{background:#2a0f0f} .info{background:#1a1a0f}
+.meta{color:#9aa} a{color:#7dd3fc}
+</style></head><body>
+<h1>AllRight â€” Burp-equivalent audit</h1>
+<p class="meta">2026-07-21T20:11:21.0408002-05:00 Â· http://127.0.0.1:3000 Â· PASS 14 Â· FAIL 0 Â· INFO 3</p>
+<table><thead><tr><th>Ãrea</th><th>Prueba</th><th>Estado</th><th>Detalle</th></tr></thead>
+<tbody>
+<tr class='info'><td>Auth</td><td>Login demo OK</td><td><strong>INFO</strong></td><td>Demo fallÃ³ (Error en el servidor remoto: (401) No autorizado.); creando usuario efimero</td></tr>
+<tr class='pass'><td>Auth</td><td>Login efimero OK</td><td><strong>PASS</strong></td><td>burp_653a99494c@test.com</td></tr>
+<tr class='pass'><td>JWT</td><td>Algoritmo none rechazado</td><td><strong>PASS</strong></td><td>HTTP 401</td></tr>
+<tr class='pass'><td>JWT</td><td>Firma alterada rechazada</td><td><strong>PASS</strong></td><td>HTTP 401</td></tr>
+<tr class='pass'><td>AuthZ</td><td>GET /proximity/zones sin JWT</td><td><strong>PASS</strong></td><td>HTTP 401</td></tr>
+<tr class='pass'><td>AuthZ</td><td>POST /security/panic sin JWT</td><td><strong>PASS</strong></td><td>HTTP 401</td></tr>
+<tr class='pass'><td>AuthZ</td><td>GET /location/history sin JWT</td><td><strong>PASS</strong></td><td>HTTP 401</td></tr>
+<tr class='pass'><td>Intruder</td><td>SQLi login no causa 500</td><td><strong>PASS</strong></td><td>payloads Intruder</td></tr>
+<tr class='pass'><td>XSS</td><td>POST /users con role XSS</td><td><strong>PASS</strong></td><td>HTTP 201 (revisar mass assignment)</td></tr>
+<tr class='pass'><td>Auth</td><td>forgot-password sin enumeracion</td><td><strong>PASS</strong></td><td>Si el correo está registrado, recibirás instrucciones para restablecer la contraseña.</td></tr>
+<tr class='pass'><td>Auth</td><td>reset token invalido</td><td><strong>PASS</strong></td><td>HTTP 401</td></tr>
+<tr class='pass'><td>ZKP</td><td>verify proof vacio rechazado</td><td><strong>PASS</strong></td><td>HTTP 400</td></tr>
+<tr class='pass'><td>Proximity</td><td>report beacon desconocido</td><td><strong>PASS</strong></td><td>HTTP 400</td></tr>
+<tr class='pass'><td>Geofence</td><td>check fuera de zona (0,0)</td><td><strong>PASS</strong></td><td>HTTP 201</td></tr>
+<tr class='pass'><td>Intruder</td><td>Rate limit login 429</td><td><strong>PASS</strong></td><td>15 intentos fallidos</td></tr>
+<tr class='info'><td>Passive</td><td>Headers seguridad /health</td><td><strong>INFO</strong></td><td>sin CSP; sin X-Content-Type-Options; sin HSTS (esperado en HTTP)</td></tr>
+<tr class='info'><td>Disclosure</td><td>GET /metrics</td><td><strong>INFO</strong></td><td>publico (dev OK; prod debe usar METRICS_TOKEN)</td></tr>
+</tbody></table>
+<p class="meta">GuÃ­a GUI: <code>scripts/security/BURP-SUITE.md</code> Â· Targets: <code>burp-targets.json</code></p>
+</body></html>

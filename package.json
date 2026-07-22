@@ -37,7 +37,7 @@
     "security:forensic": "powershell -ExecutionPolicy Bypass -File scripts/security/forensic-ram-audit.ps1",
     "security:pentest": "powershell -ExecutionPolicy Bypass -File scripts/security/api-pentest.ps1",
     "security:pentest:html": "powershell -ExecutionPolicy Bypass -File scripts/security/generate-pentest-html.ps1",
-    "security:burp": "echo Ver scripts/security/BURP-SUITE.md",
+    "security:burp": "powershell -ExecutionPolicy Bypass -File scripts/security/burp-audit.ps1",
     "docs:pdf": "node scripts/generate-docs-pdf.js",
     "cap:sync": "npm run cap:sync -w frontend",
     "cap:android": "npm run cap:android -w frontend",
